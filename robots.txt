@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /troy-trees/
+Disallow: /albany-museums/
+Disallow: /nyc-museums/
+Disallow: /tools/
+Disallow: /preview-design.html
+
+Sitemap: https://greg-fitzgerald.com/sitemap.xml

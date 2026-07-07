@@ -1,0 +1,1206 @@
+/* ============================
+   RESET
+   ============================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ============================
+   BASE
+   ============================ */
+
+html { font-size: 19px; }
+
+body {
+    font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    color: #111;
+    background: #fff;
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+    overflow-wrap: break-word;
+    counter-reset: sidenote-counter;
+}
+
+/* Internal links -- dark blue */
+a {
+    color: #00008b;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+a:hover { color: #0000cc; }
+
+/* One link colour. The old green for external links was 6.6:1 against the navy's
+   15.3:1, so it read as a disabled link rather than a sibling -- a half-signalled
+   convention that looks like a mistake. */
+
+/* ============================
+   HEADER
+   ============================ */
+
+/* Gutters are 32px, not 2rem. The root is 19px, so 2rem would be 38px and the
+   content area 904px -- which broke the 568 + 348 = 916 rail arithmetic below and
+   pushed every margin element 12px past the grid. Keep these in px so the text
+   column, the rail, and the header rule all share one right edge. */
+.site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 2rem 32px 0.75rem 32px;
+    border-bottom: 1px solid #111;
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.site-name {
+    font-size: 1.9rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1;
+}
+.site-name a { color: #111; text-decoration: none; }
+
+/* Plain text links, not boxed pills. At 1.3rem the nav was set larger than every
+   heading but h1, so the chrome outshouted the content on every page. Padding sits
+   on the anchor, not the li -- otherwise the visible target isn't the tappable one. */
+.site-nav {
+    list-style: none; margin: 0; padding: 0;
+    display: flex; flex-wrap: wrap; gap: 0.15rem;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.site-nav li { padding: 0; }
+
+.site-nav a {
+    color: #555;
+    text-decoration: none;
+    display: block;
+    padding: 0.3rem 0.55rem;
+}
+
+.site-nav a:hover { color: #111; text-decoration: underline; text-underline-offset: 4px; }
+
+/* Current page: the nav should say where you are. */
+.site-nav a[aria-current="page"] {
+    color: #111;
+    font-weight: 600;
+    box-shadow: inset 0 -1px 0 0 #111;
+}
+
+/* ============================
+   ARTICLE LAYOUT
+   980px max, 568px text column,
+   348px sidenotes floated right.
+   ============================ */
+
+/* Scoped to the top-level blog-post article. Unscoped, this also caught
+   <article class="post-preview"> on writing.html, where the 568px cap plus
+   margin:auto centered the preview inside the 904px box and indented it 206px. */
+body > article {
+    max-width: 980px;
+    margin: 3rem auto;
+    padding: 0 32px;
+    position: relative;
+}
+
+article > p,
+article > h2,
+article > h3,
+article > blockquote,
+article > ul,
+article > ol,
+article > pre,
+article > .katex-display,
+article > .table-wrapper,
+article > .video-wrapper,
+article > .tweet-embed {
+    max-width: 568px; /* 62% of the 916px content area; 568 + 348 rail = 916 exactly */
+}
+
+/* Type 1: inline figure (no caption) stays in text column */
+article > figure.inline { max-width: 568px; }
+
+/* Type 2: captioned figure spans full article width */
+article > figure { max-width: 100%; }
+
+/* Two equal columns for side-by-side comparisons (spans the full article width) */
+.two-col {
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 1.5rem 0;
+    box-shadow: 0 0 0 1px #ddd;
+}
+.two-col > * { min-width: 0; padding: 0.9rem 1.1rem; }
+.two-col > *:first-child { border-right: 1px solid #ddd; }
+.two-col > * > :first-child { margin-top: 0; }
+@media (max-width: 959px) {
+    .two-col { grid-template-columns: 1fr; }
+    .two-col > *:first-child { border-right: none; border-bottom: 1px solid #ddd; }
+}
+
+article > h1,
+.post-summary,
+.post-meta-block {
+    max-width: 100%;
+}
+
+/* ============================
+   TYPOGRAPHY
+   ============================ */
+
+h1 {
+    font-size: 1.9rem; font-weight: 600;
+    line-height: 1.15; margin: 0 0 0.5rem 0;
+}
+
+/* 3rem above vs 0.75rem below keeps the heading bound to what follows, and gives
+   a section break that reads against the 1.5rem gap between entries. */
+h2 {
+    font-size: 1.35rem; font-weight: 500;
+    font-style: italic; line-height: 1.3;
+    margin: 3rem 0 0.75rem 0;
+}
+
+/* 1.05rem was a 5% step off body -- too small to perceive, big enough to break
+   the 19px rhythm. */
+h3 {
+    font-size: 1.15rem; font-weight: 600;
+    line-height: 1.25;
+    margin: 2rem 0 0.5rem 0;
+}
+
+/* Balance the rag on headings, avoid orphans in body copy. Degrades to nothing. */
+h1, h2, h3, .ri-title, .post-preview h2, figcaption { text-wrap: balance; }
+p, li, .post-summary, .sidenote, .marginnote { text-wrap: pretty; }
+
+p { margin: 0 0 1rem 0; }
+
+blockquote {
+    margin: 1.5rem 0 1.5rem 2rem;
+    padding-left: 1rem;
+    border-left: 1px solid #aaa;
+    color: #333;
+    font-style: italic;
+}
+blockquote p:last-child { margin-bottom: 0; }
+/* Keep the indented blockquote inside the text column (its 2rem left margin
+   would otherwise push a 568px box into the sidenote margin). */
+article > blockquote {
+    box-sizing: border-box;
+    max-width: calc(568px - 2rem);
+}
+
+ul, ol { padding-left: 2rem; margin: 0 0 1rem 0; }
+
+/* 0.25rem left multi-line items closer to each other than their own leading,
+   so lists read as one grey mass. */
+li { margin-bottom: 0.5rem; }
+li > ul, li > ol { margin-top: 0.35rem; }
+
+/* ============================
+   POST HEADER
+   ============================ */
+
+/* Exempted to 100% above, which ran the italic standfirst to 116 characters --
+   73% over the measure the rest of the site is tuned to. 640px is ~75. */
+.post-summary {
+    font-style: italic; color: #333;
+    font-size: 1rem; margin: 0.25rem 0 1.25rem 0;
+    max-width: 640px;
+}
+
+.post-meta-block {
+    font-size: 0.8rem; color: #555;
+    margin-bottom: 2rem; line-height: 1.45;
+}
+
+.post-meta-row {
+    display: flex; gap: 0.6rem;
+    flex-wrap: wrap; align-items: baseline;
+    margin-bottom: 0.1rem;
+}
+
+.post-meta-label {
+    font-variant: small-caps; font-size: 0.72rem;
+    letter-spacing: 0.05em; color: #999;
+    width: 4.2rem; flex-shrink: 0;
+}
+
+.post-tags a { color: #555; }
+.post-tags a:hover { color: #00008b; }
+
+/* ============================
+   ABSTRACT + TOC ROW
+   ============================ */
+
+.abstract-toc-row {
+    display: flex; gap: 0;
+    align-items: stretch;
+    max-width: 100%;
+    margin: 0 0 2rem 0;
+    box-shadow: 0 0 0 1px #ddd;
+}
+
+.abstract {
+    flex: 0 0 50%;
+    min-width: 0;
+    padding: 0.9rem 1.1rem;
+    border-right: 1px solid #ddd;
+    color: #222; font-size: 0.88rem;
+}
+
+/* all-small-caps, not small-caps: the source text is capitalized here ("Summary")
+   but lowercase in the meta rows ("author"), so the same declaration produced a
+   full-height initial in one place and uniform small caps in the other. The font
+   has no smcp table, so these are synthesized and need the extra weight. */
+.abstract-label, .toc-label {
+    font-variant-caps: all-small-caps; font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em; color: #999;
+    display: block; margin-bottom: 0.4rem;
+}
+
+.abstract p:last-child { margin-bottom: 0; }
+
+.toc-block {
+    flex: 0 0 50%;
+    min-width: 0;
+    padding: 0.9rem 1.1rem;
+}
+
+/* Outer list: counter-based, no default list marker */
+.toc-block ol {
+    margin: 0;
+    padding-left: 0;
+    font-size: 0.85rem;
+    list-style: none;
+    counter-reset: toc-h2;
+}
+
+.toc-block > ol > li {
+    counter-increment: toc-h2;
+    margin-bottom: 0.2rem;
+    padding-left: 1.75rem;
+    position: relative;
+}
+
+.toc-block > ol > li::before {
+    content: counter(toc-h2) ".";
+    position: absolute;
+    left: 0;
+    color: #888;
+    font-size: 0.82rem;
+}
+
+.toc-block a { color: #333; text-decoration: none; }
+.toc-block a:hover { text-decoration: underline; color: #00008b; }
+
+/* Nested level: 1.1, 1.2, etc. */
+.toc-block ol ol {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 0.15rem;
+    counter-reset: toc-h3;
+}
+
+.toc-block ol ol li {
+    counter-increment: toc-h3;
+    font-size: 0.78rem;
+    margin-bottom: 0.1rem;
+    padding-left: 2rem;
+    position: relative;
+}
+
+.toc-block ol ol li::before {
+    content: counter(toc-h2) "." counter(toc-h3);
+    position: absolute;
+    left: 0;
+    color: #aaa;
+    font-size: 0.75rem;
+}
+
+.toc-block ol ol a { color: #555; }
+
+/* ============================
+   SIDENOTES
+   ============================ */
+
+input.margin-toggle { display: none; }
+label.margin-toggle { cursor: pointer; }
+label.margin-toggle:not(.sidenote-number) { display: none; }
+
+label.sidenote-number {
+    counter-increment: sidenote-counter;
+}
+
+label.sidenote-number::after {
+    content: counter(sidenote-counter, upper-alpha);
+    font-size: 0.65rem; vertical-align: super;
+    line-height: 0; font-style: normal;
+    color: #777; text-decoration: underline;
+    text-underline-offset: 1px;
+}
+
+.sidenote {
+    float: right; clear: right;
+    /* width is 19px (1rem) narrower than the -348px pull, which slides the
+       border-left ~1rem into the margin -- giving the text column a left
+       gutter that matches the sidenote's 1rem padding-left. */
+    width: 329px;
+    margin-right: -348px;
+    padding-left: 1rem;
+    border-left: 1px solid #ddd;
+    margin-top: 0.15rem; margin-bottom: 1rem;
+    font-size: 0.8rem; line-height: 1.45;
+    color: #444; position: relative;
+    hyphens: auto;
+    /* opaque bg + stacking so a low margin note paints over the article's
+       closing <hr> instead of colliding with it */
+    background: #fff; z-index: 1;
+    transition: background 0.3s ease;
+}
+
+.sidenote::before {
+    content: counter(sidenote-counter, upper-alpha) " \2014\0020";
+    font-size: 0.72rem; font-style: normal;
+    color: #aaa; vertical-align: baseline;
+}
+
+.sidenote.highlighted { background: #fffbcc; }
+
+/* Images inside sidenotes */
+.sidenote img, .marginnote img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-top: 0.4rem;
+}
+
+.marginnote {
+    float: right; clear: right;
+    width: 329px; /* see .sidenote -- 1rem narrower than the pull for the gutter */
+    margin-right: -348px;
+    padding-left: 1rem;
+    border-left: 1px solid #ddd;
+    margin-top: 0.15rem; margin-bottom: 1rem;
+    font-size: 0.8rem; line-height: 1.45; color: #444;
+    hyphens: auto;
+    /* opaque bg + stacking so a low margin note covers the closing <hr> */
+    position: relative; z-index: 1; background: #fff;
+}
+
+/* The rail is ~40 characters wide; an unhyphenated rag gets lumpy at that measure. */
+.marginfigure, .abstract, .bib-citation, .bib-annotation, .toc-block { hyphens: auto; }
+
+/* ============================
+   FIGURES & IMAGES
+   ============================ */
+
+figure {
+    margin: 1.5rem 0;
+}
+
+figure img {
+    max-width: 100%; height: auto; display: block;
+}
+
+/* Placeholder div used when no real image is available */
+.img-placeholder {
+    width: 100%; height: 220px;
+    background: #ebebeb;
+    display: flex; align-items: center;
+    justify-content: center;
+    color: #888; font-size: 0.82rem;
+    font-family: 'Consolas', monospace;
+    border: 1px solid #ddd;
+}
+
+figcaption {
+    font-size: 0.8rem; color: #555;
+    font-style: italic; margin-top: 0.5rem;
+    line-height: 1.45;
+}
+
+figcaption strong {
+    font-style: normal; font-weight: 600; color: #333;
+}
+
+/* ============================
+   CODE
+   ============================ */
+
+code {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.8rem;
+    background: #f4f4f4;
+    border: 1px solid #e4e4e4;
+    padding: 0.05rem 0.3rem;
+    border-radius: 2px;
+}
+
+pre {
+    background: #f4f4f4;
+    border: 1px solid #e4e4e4;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    font-size: 0.8rem;
+    line-height: 1.55;
+    border-radius: 3px;
+    margin: 1rem 0 1.25rem 0;
+}
+
+pre code {
+    background: none; border: none;
+    padding: 0; font-size: inherit;
+}
+
+/* ============================
+   TABLES
+   ============================ */
+
+.table-wrapper {
+    overflow-x: auto;
+    margin: 1.25rem 0;
+}
+
+/* Full-width table (Type 2 -- same as captioned figure) */
+.table-wrapper.full {
+    max-width: 100%;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.85rem;
+}
+
+thead th {
+    font-weight: 600;
+    text-align: left;
+    border-top: 2px solid #111;
+    border-bottom: 1px solid #111;
+    padding: 0.4rem 0.75rem;
+}
+
+tbody td {
+    padding: 0.35rem 0.75rem;
+    border-bottom: 1px solid #ddd;
+}
+
+tbody tr:last-child td {
+    border-bottom: 2px solid #111;
+}
+
+tfoot td {
+    font-size: 0.78rem;
+    color: #555;
+    padding: 0.35rem 0.75rem;
+    font-style: italic;
+}
+
+/* ============================
+   MATH (KaTeX)
+   ============================ */
+
+.katex-display {
+    margin: 1.25rem 0;
+    overflow-x: auto;
+}
+
+/* ============================
+   EMBEDDED CONTENT
+   ============================ */
+
+/* Responsive video wrapper (16:9) */
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0; overflow: hidden;
+    margin: 1.25rem 0;
+    background: #000;
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: none;
+}
+
+/* Tweet / social embed container */
+.tweet-embed {
+    margin: 1.25rem 0;
+    border: 1px solid #cfd9de;
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    font-size: 0.88rem;
+    max-width: 500px;
+}
+
+.tweet-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+}
+
+.tweet-avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: #ddd;
+    flex-shrink: 0;
+}
+
+.tweet-author-name {
+    font-weight: 600; font-size: 0.9rem;
+    display: block;
+}
+
+.tweet-author-handle {
+    color: #555; font-size: 0.82rem;
+}
+
+.tweet-body {
+    line-height: 1.45;
+    margin-bottom: 0.6rem;
+}
+
+.tweet-meta {
+    font-size: 0.78rem; color: #555;
+}
+
+/* ============================
+   REFERENCE ANNOTATIONS
+   ============================ */
+
+label.ref-toggle {
+    cursor: pointer;
+    font-size: 0.72rem;
+    color: #888;
+    vertical-align: super;
+    line-height: 0;
+    margin-left: 0.15rem;
+    text-decoration: none;
+    font-style: normal;
+}
+
+label.ref-toggle:hover { color: #333; }
+
+/* ============================
+   BIBLIOGRAPHY
+   ============================ */
+
+.bibliography {
+    margin: 3rem 0 0 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid #ccc;
+}
+
+.bibliography-heading {
+    font-size: 1rem; font-weight: 600;
+    font-style: normal; margin: 0 0 0.75rem 0;
+}
+
+.bibliography ol {
+    font-size: 0.82rem;
+    padding-left: 1.5rem;
+    line-height: 1.55;
+}
+
+.bibliography li {
+    margin-bottom: 0.6rem;
+}
+
+/* ============================
+   BIBLIOGRAPHY SPLIT LAYOUT
+   ============================ */
+
+.bibliography-split {
+    max-width: 100%;
+    box-shadow: 0 0 0 1px #ddd;
+    margin: 0 0 2rem 0;
+    counter-reset: bib-counter;
+}
+
+.bib-heading-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid #ddd;
+}
+
+.bib-col-label {
+    font-variant: small-caps;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: #999;
+    padding: 0.5rem 1rem;
+}
+
+.bib-col-label:first-child {
+    border-right: 1px solid #ddd;
+}
+
+.bib-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid #ddd;
+    transition: background 0.4s ease;
+}
+
+.bib-row:last-child {
+    border-bottom: none;
+}
+
+.bib-row:target {
+    background: #fffbcc;
+}
+
+.bib-citation {
+    padding: 0.65rem 1rem;
+    font-size: 0.8rem;
+    line-height: 1.55;
+    border-right: 1px solid #ddd;
+}
+
+.bib-citation::before {
+    content: counter(bib-counter) ". ";
+    counter-increment: bib-counter;
+    color: #aaa;
+    font-size: 0.78rem;
+}
+
+.bib-annotation {
+    padding: 0.65rem 1rem;
+    font-size: 0.8rem;
+    line-height: 1.55;
+    color: #333;
+    font-style: italic;
+}
+
+.bib-annotation:empty::before {
+    content: "\2014";
+    color: #ccc;
+    font-style: normal;
+}
+
+/* In-text citation links */
+a.cite-link {
+    text-decoration: none;
+    white-space: nowrap;
+    margin-left: 0.05rem;
+    font-size: 0.72rem;
+    vertical-align: super;
+    line-height: 0;
+    color: #555;
+}
+
+a.cite-link .cite-loc {
+    color: #999;
+    font-style: italic;
+    font-size: 0.62rem;
+}
+
+a.cite-link:hover,
+a.cite-link:hover .cite-loc {
+    color: #00008b;
+}
+
+/* ============================
+   FOOTER
+   ============================ */
+
+.site-footer {
+    border-top: 1px solid #111;
+    max-width: 980px;
+    margin: 4rem auto 3rem;
+    padding: 1.2rem 32px 0;
+    font-size: 0.8rem; color: #555;
+}
+
+/* Every page used to dead-end in a copyright line. */
+.footer-links {
+    margin: 0 0 0.4rem 0;
+}
+
+.footer-links a { color: #555; }
+.footer-links a:hover { color: #00008b; }
+
+.footer-copyright { margin: 0; color: #777; }
+
+/* ============================
+   PAGE LAYOUT (non-blog pages)
+   Same 980px outer container as the header, footer, and blog article, so
+   every page shares one left margin. An inner 568px cap keeps the reading
+   measure identical to the blog's text column.
+   ============================ */
+
+.page {
+    max-width: 980px;
+    margin: 3rem auto;
+    padding: 0 32px;
+}
+
+.page > * { max-width: 568px; }
+
+/* A post preview is an <article>, but it is page content, not a page. */
+.post-preview { max-width: 568px; margin-left: 0; margin-right: 0; padding: 0; }
+
+/* Small muted line under a page title (subtitle, contact line, post date) */
+.meta {
+    color: #555;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin: 0 0 0.4rem 0;
+}
+
+.meta:last-child { margin-bottom: 0; }
+
+/* ============================
+   HOMEPAGE
+   ============================ */
+
+/* This is the most important sentence on the site; it was also the only 0.92rem
+   on it, i.e. set smaller than everything around it. */
+.hiring-banner {
+    box-shadow: 0 0 0 1px #ddd;
+    padding: 1rem 1.2rem;
+    margin: 1.5rem 0;
+    font-size: 1rem;
+}
+
+.hiring-banner p:last-child { margin-bottom: 0; }
+
+.post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* ============================
+   POST PREVIEWS (blog index)
+   ============================ */
+
+.post-preview {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 2rem;
+}
+
+.post-preview:last-child {
+    border-bottom: none;
+}
+
+.post-preview h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    font-style: normal;
+    margin: 0 0 0.25rem 0;
+}
+
+.post-preview .post-meta {
+    color: #555;
+    font-size: 0.8rem;
+}
+
+/* ============================
+   HEADSHOT (about page, etc.)
+   ============================ */
+
+.headshot {
+    float: right;
+    max-width: 220px;
+    margin: 0 0 1.5rem 1.5rem;
+}
+
+/* An image parked in the right margin, on the sidenote rail. Must sit inside
+   a 568px text block (like a <p>), not as a direct child of .page -- a float's
+   pull is measured from its containing block, and .page's is the full 904px. */
+.marginfigure {
+    float: right;
+    clear: right;
+    width: 329px;
+    margin: 0.3rem -348px 1.25rem 0;
+    padding-left: 1rem;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: #444;
+}
+
+img.marginfigure { height: auto; }
+
+.marginfigure img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.marginfigure figcaption {
+    font-size: 0.8rem;
+    margin-top: 0.4rem;
+}
+
+/* Homepage portrait. Narrow default: a centred block in the text column, and because
+   it stays inside the first body paragraph in source order, it falls below the hiring
+   banner on phones instead of splitting the name from the subtitle. */
+img.page-portrait {
+    display: block;
+    width: 100%;
+    max-width: 260px;
+    margin: 0 auto 1.5rem;
+    height: auto;
+}
+
+/* Wide: parked at the top of the rail, flush with the h1, whatever height the hiring
+   banner happens to be. Absolute rather than floated -- a float lands where it sits in
+   the flow, so it could never be both flush with the title and after the banner. */
+@media (min-width: 980px) {
+    .page { position: relative; }
+
+    img.page-portrait {
+        position: absolute;
+        /* Optical, not geometric: top:0 aligns with the h1's line box, which sits
+           6.5px above the cap height of the title. Measured, then rounded. */
+        top: 6px;
+        right: 32px;      /* .page's padding box, so this is the 1098 content edge */
+        width: 329px;     /* same rail width as .sidenote / .marginfigure */
+        max-width: none;
+        margin: 0;
+    }
+}
+
+/* ============================
+   CV
+   ============================ */
+
+/* margin-bottom here was dead -- it collapsed into the next h2's larger top margin,
+   so a top-level section break was nearly indistinguishable from an entry break on
+   a 5,900px page. A hairline does the work, and rhymes with .research-item. */
+.cv-section {
+    margin-bottom: 0;
+}
+
+.cv-section + .cv-section {
+    border-top: 1px solid #e4e4e4;
+    padding-top: 1.5rem;
+    margin-top: 2rem;
+}
+
+.cv-section + .cv-section > h2:first-child { margin-top: 0; }
+
+.cv-entry {
+    margin-bottom: 1.5rem;
+}
+
+.cv-entry-header {
+    margin-bottom: 0.25rem;
+}
+
+/* 600, not bold: at 700 the entry titles out-weighted the italic 500 h2 above
+   them, so the section heading lost a weight contest with its own contents. */
+.cv-title {
+    font-weight: 600;
+}
+
+/* Dates live in the right margin on the same rail as sidenotes, so entry
+   titles stay flush left and the dates read as a scannable column. */
+.cv-date {
+    float: right;
+    clear: right;
+    width: 329px;
+    margin-right: -348px;
+    padding-left: 1rem;
+    color: #555;
+    font-size: 0.88rem;
+    white-space: nowrap;
+    /* the narrow proportional 1 made the date column read as ragged */
+    font-variant-numeric: tabular-nums;
+}
+
+td, .bib-citation { font-variant-numeric: tabular-nums; }
+
+.cv-organization {
+    color: #555;
+    margin-bottom: 0.25rem;
+}
+
+.download-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 1.25rem 0 2rem 0;
+}
+
+.download-link {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border: 1px solid #ddd;
+    font-size: 0.85rem;
+    margin: 1rem 0;
+}
+
+.download-links .download-link { margin: 0; }
+
+/* ============================
+   RESPONSIVE
+   ============================ */
+
+/* 959, not 820. Below 980px the text column's right edge is fixed at 32 + 568 = 600,
+   so a rail float's right edge lands at 600 + 348 = 948 regardless of viewport --
+   which meant every width from 821 to 953 scrolled sideways by up to 133px, with
+   the homepage headshot cut in half at iPad-portrait widths. Below 948 there is
+   physically no room for the rail, so the stacked treatment must start here. */
+@media (max-width: 959px) {
+    article > p, article > h1, article > h2,
+    article > h3, article > blockquote,
+    article > ul, article > ol,
+    article > figure, article > pre,
+    article > .table-wrapper, article > .video-wrapper,
+    article > .tweet-embed, article > .bibliography,
+    .post-summary, .post-meta-block,
+    .abstract-toc-row, figure.wide {
+        max-width: 100%;
+    }
+
+    .page > * { max-width: 100%; }
+    .post-preview { max-width: 100%; }
+
+    .abstract-toc-row { flex-direction: column; }
+    .abstract { border-right: none; border-bottom: 1px solid #ddd; }
+
+    label.margin-toggle:not(.sidenote-number) { display: inline; }
+
+    /* Sidenotes are anchored to a clause, so they collapse behind their marker.
+       Marginnotes are not, so they inline -- they used to be hidden with no way to
+       open them (the toggle selector above matches no element in the HTML), which
+       silently dropped 10 notes, 9 of them the guide's reflection prompts. */
+    .sidenote { display: none; }
+
+    .marginnote {
+        display: block; float: none; clear: both;
+        width: 100%; margin: 0.75rem 0 1rem 0;
+        border-left: 2px solid #aaa;
+        padding-left: 0.75rem; font-size: 0.85rem;
+    }
+
+    .margin-toggle:checked + .sidenote,
+    .margin-toggle:checked + .marginnote {
+        display: block; float: none; clear: both;
+        width: 100%; margin: 0.5rem 0 1rem 0;
+        border-left: 2px solid #aaa;
+        padding-left: 0.75rem; font-size: 0.85rem;
+    }
+
+    /* Grow the hit box without moving the glyph: 9x26px was a coin-flip tap. */
+    label.sidenote-number {
+        display: inline-block;
+        min-width: 2.1rem;
+        padding: 0.55rem 0.4rem;
+        margin: -0.55rem -0.15rem;
+        text-align: center;
+    }
+
+    label.sidenote-number::after { font-size: 0.78rem; color: #00008b; }
+
+    .headshot {
+        float: none;
+        display: block;
+        max-width: 260px;
+        margin: 0 auto 1.5rem;
+    }
+
+    /* No margin to park things in: bring them back into the column.
+       display:block is load-bearing -- margin:auto cannot centre an inline <img>,
+       and without it the photo sat left with text jammed against its last line. */
+    .marginfigure {
+        display: block;
+        float: none;
+        width: 100%;
+        max-width: 260px;
+        margin: 0 auto 1.5rem;
+        padding-left: 0;
+    }
+
+    /* NOTE: the .ri-status responsive reset lives at the end of this file, after
+       the RESEARCH ITEMS block -- same specificity, so it has to come later to win. */
+
+    /* No margin rail on phones, so the date becomes a small line above the
+       title instead of an orphan fragment after a wrapped one. */
+    .cv-entry-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.1rem 0.5rem;
+    }
+
+    .cv-date {
+        float: none;
+        order: -1;
+        width: 100%;
+        margin-right: 0;
+        padding-left: 0;
+        font-size: 0.8rem;
+    }
+}
+
+/* Stacked header: name on top, nav on ONE row beneath it. Side by side, the name and
+   nav need 713px (measured), so below that the nav used to wrap and drop "Contact"
+   onto a row of its own; 768 leaves headroom for the wider Georgia fallback.
+   The labels need ~265px at the phone size and a 390px phone offers 350px -- it was
+   the fixed side padding that forced the wrap, so space-between hands the leftover
+   width to the gaps instead. The row is pulled out by the anchors' side padding so
+   the first and last labels still sit flush with the text column. */
+@media (max-width: 767px) {
+    .site-header {
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .site-nav {
+        width: calc(100% + 0.6rem);
+        max-width: 22rem;   /* past phone width, stop spreading: 100px gaps look lost */
+        margin: 0 -0.3rem;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        gap: 0;
+    }
+
+    .site-nav a { padding-left: 0.3rem; padding-right: 0.3rem; }
+}
+
+/* Phones. The desktop gutters and nav are sized for a 980px grid; at 390px they
+   cost a third of the screen. */
+@media (max-width: 600px) {
+    /* 19px is a desktop size. In a 346px column it gave 33-36 characters per line,
+       under the ~40 floor, which is why every page ran long (the CV was 10.7
+       screens). 17px buys ~40 cpl and cuts roughly 15% of the scroll. */
+    html { font-size: 17px; }
+
+    .site-header { padding: 1.5rem 20px 0.7rem 20px; }
+
+    .site-name { font-size: 1.55rem; }
+
+    .site-nav a { padding: 0.8rem 0.3rem; }  /* 44px tall at the 17px phone root */
+
+    /* Gutters pinned in px so they don't shrink with the smaller root. */
+    .page, body > article { padding: 0 20px; margin-top: 2rem; }
+
+    .site-footer {
+        padding: 1.2rem 20px 0;
+        margin-top: 3rem;
+        margin-bottom: 1.5rem;
+    }
+
+    h1 { font-size: 1.65rem; }
+    h2 { margin-top: 2.25rem; }
+
+    /* The site's entire conversion path was a row of 24px-tall targets. */
+    .hiring-banner p:last-child a { display: inline-block; padding: 0.62rem 0; }
+    .download-link { padding: 0.6rem 0.9rem; }
+}
+
+/* 320px-class phones: at full size the one-row nav would leave ~4px between labels. */
+@media (max-width: 359px) {
+    .site-nav { font-size: 0.9rem; }
+}
+
+/* ============================
+   RESEARCH ITEMS (collapsible)
+   ============================ */
+
+.research-item {
+    border-top: 1px solid #e4e4e4;
+}
+.research-item:last-of-type {
+    border-bottom: 1px solid #e4e4e4;
+}
+.research-item > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 0.85rem 0;
+    outline: none;
+}
+.research-item > summary::-webkit-details-marker { display: none; }
+.research-item > summary:focus-visible { outline: 2px solid #00008b; outline-offset: 2px; }
+
+/* 1rem, below the 1.15rem h3 that groups these items -- at 1.05 the item title and
+   its own group heading were typographically identical. */
+.ri-title {
+    display: block;
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.3;
+    color: #111;
+}
+.ri-snippet {
+    display: block;
+    margin-top: 0.2rem;
+    color: #444;
+}
+
+/* Provenance -- venue, year, status -- is exactly what a margin is for. Moving it
+   out of the flow also fixes the wrap that put "Read more" at four different x
+   positions down the page. <summary> sits in a 568px block, so the pull is legal. */
+.ri-status {
+    float: right;
+    clear: right;
+    width: 329px;
+    margin: 0.2rem -348px 0 0;
+    padding-left: 1rem;
+    font-size: 0.72rem;
+    font-variant-caps: all-small-caps;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #777;
+}
+.ri-more {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.8rem;
+    color: #00008b;
+}
+.ri-more::after { content: "Read more \25be"; }
+.research-item[open] .ri-more::after { content: "Show less \25b4"; }
+.research-item[open] > summary .ri-snippet { color: #666; }
+
+.ri-body {
+    padding: 0 0 0.9rem 0;
+}
+.ri-body p { margin: 0 0 0.7rem 0; }
+.ri-body figure {
+    margin: 0 0 0.9rem 0;
+}
+.ri-body figure img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #e4e4e4;
+}
+.ri-body figcaption {
+    font-size: 0.8rem;
+    color: #777;
+    margin-top: 0.3rem;
+}
+
+/* Below the rail breakpoint the status returns to the flow, on its own line so it
+   can't collide with the disclosure control. Must sit after the block above. */
+@media (max-width: 959px) {
+    .ri-status {
+        float: none;
+        display: block;
+        width: auto;
+        margin: 0.35rem 0 0 0;
+        padding-left: 0;
+    }
+}
+
+/* ============================
+   PRINT
+   ============================ */
+
+@media print {
+    .site-header,
+    .site-footer {
+        display: none;
+    }
+}

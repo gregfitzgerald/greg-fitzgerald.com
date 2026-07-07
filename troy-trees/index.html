@@ -1,0 +1,4095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Troy, NY Tree Identification Guide - Greg Fitzgerald</title>
+    <meta name="description" content="Interactive guide to identifying trees in the Troy, NY and Capital District area. Learn leaf shapes, bark patterns, and seasonal identification tips.">
+    <link href="https://fonts.googleapis.com/css?family=Encode+Sans:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Dosis:500" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/jpeg" href="../favicon.jpg">
+
+    <!-- PWA Configuration -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2d5016">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Troy Trees">
+
+    <style>
+        /* Tree Guide Specific Styles */
+        .tree-controls {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-left: 4px solid #ffd1dc;
+            margin: 1rem 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+        .tree-controls label {
+            font-weight: 700;
+            margin-right: 0.5rem;
+        }
+        .tree-controls select, .tree-controls input {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+        .tree-controls input[type="text"] {
+            width: 200px;
+        }
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .view-toggle button {
+            padding: 0.5rem 1rem;
+            border: 2px solid #ffd1dc;
+            background: white;
+            cursor: pointer;
+            font-family: 'Dosis', sans-serif;
+            font-size: 1rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .view-toggle button.active, .view-toggle button:hover {
+            background: #ffd1dc;
+        }
+        .tree-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1rem 0.5rem;
+        }
+        .tree-card {
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            background: white;
+        }
+        .tree-card:hover {
+            border-color: #ffd1dc;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .tree-card.expanded {
+            grid-column: 1 / -1;
+            max-width: 800px;
+        }
+        .tree-card-header {
+            background: linear-gradient(135deg, #f9f9f9 0%, #fff 100%);
+            padding: 1rem;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .tree-card-header h3 {
+            margin: 0;
+            padding: 0;
+            border: none;
+            font-family: 'Dosis', sans-serif;
+            font-size: 1.3rem;
+        }
+        .tree-card-header h3:before {
+            content: none;
+        }
+        .tree-card-header .scientific-name {
+            font-style: italic;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+        .tree-card-body {
+            padding: 1rem;
+        }
+        .tree-card-body p {
+            margin: 0.5rem 0;
+        }
+        .tree-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .tree-tag {
+            background: #f4f4f4;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+        .tree-tag.native { background: #d4edda; color: #155724; }
+        .tree-tag.introduced { background: #fff3cd; color: #856404; }
+        .tree-tag.deciduous { background: #cce5ff; color: #004085; }
+        .tree-tag.evergreen { background: #d1e7dd; color: #0f5132; }
+
+        /* Expanded card details */
+        .tree-details {
+            display: none;
+            padding: 1rem;
+            border-top: 1px solid #e5e5e5;
+            background: #fafafa;
+        }
+        .tree-card.expanded .tree-details {
+            display: block;
+        }
+        .detail-section {
+            margin-bottom: 1rem;
+        }
+        .detail-section h4 {
+            font-family: 'Dosis', sans-serif;
+            margin: 0 0 0.5rem 0;
+            padding: 0;
+            color: #333;
+            border-left: 3px solid #ffd1dc;
+            padding-left: 8px;
+        }
+        .detail-section h4:before {
+            content: none;
+        }
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .id-feature {
+            background: white;
+            padding: 0.75rem;
+            border-radius: 4px;
+            border: 1px solid #e5e5e5;
+        }
+        .id-feature strong {
+            display: block;
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+        .seasonal-tips {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .season {
+            text-align: center;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        .season.spring { background: #d4edda; }
+        .season.summer { background: #cce5ff; }
+        .season.fall { background: #fff3cd; }
+        .season.winter { background: #e2e3e5; }
+        .season strong {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        /* List view */
+        .tree-list {
+            margin: 1rem 0.5rem;
+        }
+        .tree-list-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e5e5;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .tree-list-item:hover {
+            background: #f9f9f9;
+        }
+        .tree-list-item .name {
+            flex: 1;
+            font-weight: 700;
+        }
+        .tree-list-item .scientific {
+            flex: 1;
+            font-style: italic;
+            color: #666;
+        }
+        .tree-list-item .family {
+            flex: 1;
+            color: #999;
+        }
+
+        /* Quiz mode */
+        .quiz-container {
+            background: #f9f9f9;
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 1rem 0.5rem;
+            text-align: center;
+        }
+        .quiz-question {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .quiz-option {
+            padding: 1rem;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+        .quiz-option:hover {
+            border-color: #ffd1dc;
+        }
+        .quiz-option.correct {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        .quiz-option.incorrect {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+        .quiz-score {
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+        }
+        .quiz-btn {
+            padding: 0.75rem 1.5rem;
+            background: #ffd1dc;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Dosis', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        .quiz-btn:hover {
+            background: #ffb8c8;
+        }
+
+        /* Practice mode */
+        .practice-session {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .practice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .practice-image {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #fafafa;
+            border-radius: 8px;
+        }
+        .practice-matches {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f0f8ff;
+            border-radius: 8px;
+            border-left: 4px solid #4a90d9;
+        }
+        .practice-matches .quiz-options {
+            gap: 8px;
+        }
+        .practice-matches .quiz-option {
+            flex: 0 0 auto;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+        .practice-result {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+        .practice-result.correct {
+            background: #d4edda;
+            border: 2px solid #28a745;
+        }
+        .practice-result.incorrect {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+        }
+
+        /* Progress tracker */
+        .progress-section {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-left: 4px solid #ffd1dc;
+            margin: 1rem 0.5rem;
+        }
+        .progress-bar {
+            background: #e5e5e5;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #ffd1dc, #ffa8b8);
+            height: 100%;
+            transition: width 0.3s;
+        }
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Identification key */
+        .id-key {
+            margin: 1rem 0.5rem;
+        }
+        .id-step {
+            background: white;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .id-step.active {
+            border-color: #ffd1dc;
+        }
+        .id-step h4 {
+            margin: 0 0 0.75rem 0;
+            padding: 0;
+            border: none;
+        }
+        .id-step h4:before { content: none; }
+        .id-choices {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .id-choice {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e5e5e5;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+        .id-choice:hover {
+            border-color: #ffd1dc;
+        }
+        .id-choice.selected {
+            border-color: #ffd1dc;
+            background: #ffd1dc;
+        }
+
+        /* Phylogeny Tree Styles */
+        .phylo-container {
+            margin: 1rem 0.5rem;
+        }
+        .phylo-intro {
+            background: #f9f9f9;
+            border-left: 4px solid #ffd1dc;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .phylo-intro p {
+            margin: 0.5rem 0;
+        }
+        .phylo-mnemonic {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 4px;
+            padding: 0.75rem;
+            margin-top: 0.75rem;
+        }
+        .phylo-mnemonic strong {
+            color: #856404;
+        }
+        .phylo-tree {
+            font-size: 0.95rem;
+        }
+        .phylo-clade {
+            margin-left: 0;
+            border-left: 3px solid #ccc;
+            padding-left: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .phylo-clade.major {
+            border-left-color: #2d5016;
+            border-left-width: 4px;
+        }
+        .phylo-clade.family {
+            border-left-color: #ffd1dc;
+        }
+        .phylo-node {
+            background: #f4f4f4;
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .phylo-node:hover {
+            background: #e8e8e8;
+        }
+        .phylo-node.expanded {
+            background: #fff;
+            border: 2px solid #ffd1dc;
+        }
+        .phylo-node-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .phylo-toggle {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+        }
+        .phylo-node-name {
+            font-weight: bold;
+            color: #2d5016;
+        }
+        .phylo-node-latin {
+            font-style: italic;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .phylo-count {
+            background: #e9ecef;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            color: #666;
+        }
+        .phylo-traits {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: #e8f5e9;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .phylo-traits strong {
+            color: #2d5016;
+        }
+        .phylo-children {
+            display: none;
+            margin-top: 0.5rem;
+        }
+        .phylo-node.expanded > .phylo-children {
+            display: block;
+        }
+        .phylo-species {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            margin: 0.25rem 0;
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .phylo-species:hover {
+            border-color: #ffd1dc;
+            background: #fff5f7;
+        }
+        .phylo-species .species-name {
+            font-weight: 500;
+        }
+        .phylo-species .species-latin {
+            font-style: italic;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .phylo-species .species-tag {
+            margin-left: auto;
+            font-size: 0.75em;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .phylo-species .species-tag.native {
+            background: #d4edda;
+            color: #155724;
+        }
+        .phylo-species .species-tag.introduced {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .phylo-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+        .phylo-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85em;
+        }
+        .phylo-legend-line {
+            width: 20px;
+            height: 4px;
+            border-radius: 2px;
+        }
+        .phylo-legend-line.major { background: #2d5016; }
+        .phylo-legend-line.order { background: #ccc; }
+        .phylo-legend-line.family { background: #ffd1dc; }
+        body.dark-mode .phylo-node {
+            background: #333;
+        }
+        body.dark-mode .phylo-node:hover {
+            background: #444;
+        }
+        body.dark-mode .phylo-node.expanded {
+            background: #2d2d2d;
+        }
+        body.dark-mode .phylo-traits {
+            background: #1a3d1a;
+        }
+        body.dark-mode .phylo-species {
+            background: #2d2d2d;
+            border-color: #444;
+        }
+        body.dark-mode .phylo-species:hover {
+            background: #3d2d2d;
+        }
+        body.dark-mode .phylo-intro,
+        body.dark-mode .phylo-legend {
+            background: #2d2d2d;
+        }
+
+        /* Commonality Badge */
+        .commonality-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .commonality-badge.rating-5 { background: #28a745; color: white; }
+        .commonality-badge.rating-4 { background: #5cb85c; color: white; }
+        .commonality-badge.rating-3 { background: #f0ad4e; color: #333; }
+        .commonality-badge.rating-2 { background: #d9534f; color: white; }
+        .commonality-badge.rating-1 { background: #888; color: white; }
+        .commonality-stars {
+            letter-spacing: -2px;
+        }
+
+        /* Compare View Styles */
+        .compare-container {
+            margin: 1rem 0.5rem;
+        }
+        .compare-intro {
+            background: #f9f9f9;
+            border-left: 4px solid #ffd1dc;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .compare-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        .compare-card {
+            background: white;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .compare-card:hover {
+            border-color: #ffd1dc;
+        }
+        .compare-card-header {
+            background: linear-gradient(135deg, #2d5016 0%, #4a7c23 100%);
+            color: white;
+            padding: 1rem;
+        }
+        .compare-card-header h3 {
+            margin: 0;
+            padding: 0;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+        }
+        .compare-card-header h3:before { content: none; }
+        .compare-difficulty {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        .compare-species {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 0;
+        }
+        .compare-species-side {
+            padding: 1rem;
+            text-align: center;
+        }
+        .compare-species-side.left {
+            background: #f0fff0;
+        }
+        .compare-species-side.right {
+            background: #fff0f0;
+        }
+        .compare-species-vs {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+            background: #f4f4f4;
+            padding: 0 0.5rem;
+        }
+        .compare-species-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .compare-species-latin {
+            font-style: italic;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .compare-species-img {
+            width: 120px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+        }
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .compare-table th {
+            background: #f4f4f4;
+            padding: 0.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        .compare-table td {
+            padding: 0.75rem;
+            border-top: 1px solid #e5e5e5;
+            vertical-align: top;
+        }
+        .compare-table td:first-child {
+            font-weight: 500;
+            background: #fafafa;
+            width: 20%;
+        }
+        .compare-table td:nth-child(2) {
+            background: #f0fff0;
+            width: 40%;
+        }
+        .compare-table td:nth-child(3) {
+            background: #fff0f0;
+            width: 40%;
+        }
+        .compare-table .highlight {
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        body.dark-mode .compare-card {
+            background: #2d2d2d;
+            border-color: #444;
+        }
+        body.dark-mode .compare-species-side.left {
+            background: #1a3d1a;
+        }
+        body.dark-mode .compare-species-side.right {
+            background: #3d1a1a;
+        }
+        body.dark-mode .compare-species-vs {
+            background: #333;
+        }
+        body.dark-mode .compare-table th,
+        body.dark-mode .compare-table td:first-child {
+            background: #333;
+        }
+        body.dark-mode .compare-table td:nth-child(2) {
+            background: #1a3d1a;
+        }
+        body.dark-mode .compare-table td:nth-child(3) {
+            background: #3d1a1a;
+        }
+        body.dark-mode .compare-intro {
+            background: #2d2d2d;
+        }
+        @media (max-width: 760px) {
+            .compare-species {
+                grid-template-columns: 1fr;
+            }
+            .compare-species-vs {
+                padding: 0.5rem;
+            }
+            .compare-table td:first-child {
+                width: 30%;
+            }
+            .compare-table td:nth-child(2),
+            .compare-table td:nth-child(3) {
+                width: 35%;
+            }
+        }
+
+        /* Seasonal Mode Styles */
+        .seasonal-container {
+            margin: 1rem 0.5rem;
+        }
+        .seasonal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .seasonal-selector {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .seasonal-btn {
+            padding: 0.75rem 1.25rem;
+            border: 2px solid #e5e5e5;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 90px;
+        }
+        .seasonal-btn:hover {
+            border-color: #ffd1dc;
+        }
+        .seasonal-btn.active {
+            border-color: var(--season-color, #ffd1dc);
+            background: var(--season-bg, #fff5f7);
+        }
+        .seasonal-btn .season-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+        .seasonal-btn .season-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .seasonal-btn .season-months {
+            font-size: 0.7rem;
+            color: #666;
+        }
+        .seasonal-btn[data-season="spring"] { --season-color: #4caf50; --season-bg: #e8f5e9; }
+        .seasonal-btn[data-season="summer"] { --season-color: #ff9800; --season-bg: #fff3e0; }
+        .seasonal-btn[data-season="fall"] { --season-color: #f44336; --season-bg: #ffebee; }
+        .seasonal-btn[data-season="winter"] { --season-color: #2196f3; --season-bg: #e3f2fd; }
+        .seasonal-info {
+            background: #f9f9f9;
+            border-left: 4px solid var(--season-color, #ffd1dc);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 8px 8px 0;
+        }
+        .seasonal-info h3 {
+            margin: 0 0 0.5rem 0;
+            padding: 0;
+            border: none;
+            color: var(--season-color, #333);
+        }
+        .seasonal-info h3:before { content: none; }
+        .seasonal-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .seasonal-feature {
+            background: white;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .seasonal-feature.primary {
+            border-color: var(--season-color, #ffd1dc);
+            border-width: 2px;
+        }
+        .seasonal-feature h4 {
+            margin: 0 0 0.5rem 0;
+            padding: 0;
+            border: none;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .seasonal-feature h4:before { content: none; }
+        .seasonal-feature.primary h4 {
+            color: var(--season-color, #333);
+        }
+        .seasonal-feature p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .seasonal-tree-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        .seasonal-tree-card {
+            background: white;
+            border: 2px solid #e5e5e5;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .seasonal-tree-card:hover {
+            border-color: #ffd1dc;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .seasonal-tree-header {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            align-items: center;
+        }
+        .seasonal-tree-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        .seasonal-tree-info h4 {
+            margin: 0;
+            padding: 0;
+            border: none;
+            font-size: 1.1rem;
+        }
+        .seasonal-tree-info h4:before { content: none; }
+        .seasonal-tree-info .latin {
+            font-style: italic;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .seasonal-tip {
+            background: var(--season-bg, #f9f9f9);
+            padding: 1rem;
+            border-top: 1px solid #e5e5e5;
+        }
+        .seasonal-tip-label {
+            font-weight: 600;
+            color: var(--season-color, #333);
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+        .seasonal-tip-text {
+            font-size: 0.95rem;
+        }
+        body.dark-mode .seasonal-btn {
+            background: #2d2d2d;
+            border-color: #444;
+        }
+        body.dark-mode .seasonal-info {
+            background: #2d2d2d;
+        }
+        body.dark-mode .seasonal-feature {
+            background: #333;
+            border-color: #444;
+        }
+        body.dark-mode .seasonal-tree-card {
+            background: #2d2d2d;
+            border-color: #444;
+        }
+        body.dark-mode .seasonal-tip {
+            border-color: #444;
+        }
+
+        /* Tree Images */
+        .tree-card-image {
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+            background: #f0f0f0;
+            position: relative;
+        }
+        /* Loading spinner for images */
+        .tree-card-image::before,
+        .image-gallery-item::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 24px;
+            height: 24px;
+            margin: -12px 0 0 -12px;
+            border: 3px solid #e0e0e0;
+            border-top-color: #ffd1dc;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            z-index: 1;
+        }
+        .tree-card-image.loaded::before,
+        .image-gallery-item.loaded::before {
+            display: none;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .tree-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s, opacity 0.3s;
+            opacity: 0;
+        }
+        .tree-card-image img.loaded {
+            opacity: 1;
+        }
+        .tree-card:hover .tree-card-image img {
+            transform: scale(1.05);
+        }
+        .tree-card-image .img-credit {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            font-size: 0.65rem;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .image-gallery-item {
+            position: relative;
+            aspect-ratio: 1;
+            overflow: hidden;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+        .image-gallery-item:hover {
+            border-color: #ffd1dc;
+        }
+        .image-gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .image-gallery-item .img-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 4px;
+            text-align: center;
+        }
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .lightbox.active {
+            display: flex;
+        }
+        .lightbox img {
+            max-width: 90%;
+            max-height: 80%;
+            object-fit: contain;
+        }
+        .lightbox-caption {
+            color: white;
+            margin-top: 1rem;
+            text-align: center;
+            max-width: 600px;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 3rem;
+            cursor: pointer;
+            padding: 20px;
+            user-select: none;
+        }
+        .lightbox-nav.prev { left: 20px; }
+        .lightbox-nav.next { right: 20px; }
+        .lightbox-credit {
+            color: #aaa;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 760px) {
+            .tree-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .tree-controls input[type="text"] {
+                width: 100%;
+            }
+            .seasonal-tips {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .quiz-options {
+                grid-template-columns: 1fr;
+            }
+            .image-gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            /* PWA Mobile Touch Improvements */
+            .view-toggle button {
+                min-height: 44px;
+                min-width: 44px;
+                padding: 0.75rem 1rem;
+            }
+            .quiz-btn {
+                min-height: 48px;
+                padding: 0.75rem 1.5rem;
+                font-size: 1.1rem;
+            }
+            .quiz-option {
+                min-height: 48px;
+                padding: 1rem;
+            }
+            .tree-controls select,
+            .tree-controls input {
+                min-height: 44px;
+                font-size: 16px; /* Prevents iOS zoom on focus */
+            }
+            .practice-option {
+                min-height: 48px;
+                padding: 1rem;
+            }
+            .filter-tag {
+                min-height: 36px;
+                padding: 0.5rem 0.75rem;
+            }
+            .lightbox-close,
+            .lightbox-nav {
+                min-width: 48px;
+                min-height: 48px;
+            }
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            background: #1a1a1a;
+            color: #e0e0e0;
+        }
+        body.dark-mode .tree-card {
+            background: #2d2d2d;
+            border-color: #444;
+        }
+        body.dark-mode .tree-card:hover {
+            border-color: #ffd1dc;
+        }
+        body.dark-mode .tree-card-header {
+            background: linear-gradient(135deg, #333 0%, #2d2d2d 100%);
+            border-color: #444;
+        }
+        body.dark-mode .tree-card-body,
+        body.dark-mode .tree-details {
+            background: #2d2d2d;
+        }
+        body.dark-mode .tree-controls {
+            background: #2d2d2d;
+        }
+        body.dark-mode .tree-controls select,
+        body.dark-mode .tree-controls input {
+            background: #1a1a1a;
+            color: #e0e0e0;
+            border-color: #444;
+        }
+        body.dark-mode .view-toggle button {
+            background: #2d2d2d;
+            color: #e0e0e0;
+            border-color: #444;
+        }
+        body.dark-mode .view-toggle button.active,
+        body.dark-mode .view-toggle button:hover {
+            background: #ffd1dc;
+            color: #1a1a1a;
+        }
+        body.dark-mode .quiz-option,
+        body.dark-mode .id-choice {
+            background: #2d2d2d;
+            border-color: #444;
+        }
+        body.dark-mode .quiz-option:hover,
+        body.dark-mode .id-choice:hover {
+            border-color: #ffd1dc;
+        }
+        body.dark-mode .detail-section h4 {
+            color: #e0e0e0;
+        }
+        body.dark-mode .progress-section {
+            background: #2d2d2d;
+        }
+        body.dark-mode .id-step {
+            background: #2d2d2d;
+        }
+        .dark-toggle {
+            background: none;
+            border: 2px solid #ffd1dc;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Dosis', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .dark-toggle:hover {
+            background: #ffd1dc;
+        }
+        body.dark-mode .dark-toggle {
+            color: #e0e0e0;
+        }
+
+        /* Print Stylesheet */
+        @media print {
+            .tree-controls, .progress-section, .view-toggle, .dark-toggle,
+            .lightbox, .site-header, .site-header-bottom, #quiz-section,
+            #practice-section, #id-key-section {
+                display: none !important;
+            }
+            .tree-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                border: 1px solid #ccc;
+                margin: 0.5rem 0;
+            }
+            .tree-card.expanded .tree-details {
+                display: block;
+            }
+            .tree-grid {
+                display: block;
+            }
+            body {
+                font-size: 10pt;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <nav class="site-navi">
+            <h1 class="site-title">
+                <a href="../index.html">Greg Fitzgerald</a>
+            </h1>
+            <div style="display: block">
+                <ul class="site-navi-items">
+                    <li><span style="color: #ffd1dc;">&gt;</span> <a href="../index.html">Home</a></li>
+                    <li><span style="color: #ffd1dc;">&gt;</span> <a href="../writing.html">Blog</a></li>
+                    <li><span style="color: #ffd1dc;">&gt;</span> <a href="../projects.html">Projects</a></li>
+                    <li><span style="color: #ffd1dc;">&gt;</span> <a href="../about.html">About</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <hr class="site-header-bottom">
+
+    <div class="main">
+        <h1 class="nocount">Troy, NY Tree Identification Guide</h1>
+        <p class="post-date">Capital District / Hudson Valley Region</p>
+
+        <p>An interactive guide to learning the trees of Troy, NY and the surrounding Capital District. This region sits in USDA Hardiness Zone 5b and features a mix of native eastern deciduous forest species and commonly planted ornamental trees.</p>
+
+        <!-- Progress Tracker -->
+        <div class="progress-section" id="progress-section">
+            <strong>Your Learning Progress</strong>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="progress-stats">
+                <span><span id="learned-count">0</span> of <span id="total-count">0</span> trees learned</span>
+                <span id="progress-percent">0%</span>
+            </div>
+        </div>
+
+        <!-- View Controls -->
+        <div class="tree-controls">
+            <div class="view-toggle">
+                <button id="btn-browse" class="active" onclick="setView('browse')">Browse</button>
+                <button id="btn-seasonal" onclick="setView('seasonal')">Seasonal</button>
+                <button id="btn-phylogeny" onclick="setView('phylogeny')">Phylogeny</button>
+                <button id="btn-compare" onclick="setView('compare')">Compare</button>
+                <button id="btn-identify" onclick="setView('identify')">Identify</button>
+                <button id="btn-practice" onclick="setView('practice')">Practice</button>
+                <button id="btn-quiz" onclick="setView('quiz')">Quiz</button>
+            </div>
+            <div>
+                <label for="filter-type">Type:</label>
+                <select id="filter-type" onchange="filterTrees()">
+                    <option value="all">All Trees</option>
+                    <option value="deciduous">Deciduous</option>
+                    <option value="evergreen">Evergreen</option>
+                </select>
+            </div>
+            <div>
+                <label for="filter-origin">Origin:</label>
+                <select id="filter-origin" onchange="filterTrees()">
+                    <option value="all">All Origins</option>
+                    <option value="native">Native</option>
+                    <option value="introduced">Introduced</option>
+                </select>
+            </div>
+            <div>
+                <label for="sort-by">Sort:</label>
+                <select id="sort-by" onchange="filterTrees()">
+                    <option value="commonality">Most Common First</option>
+                    <option value="name">Name (A-Z)</option>
+                    <option value="family">Family</option>
+                    <option value="learned">Learned Last</option>
+                </select>
+            </div>
+            <div>
+                <label for="search">Search:</label>
+                <input type="text" id="search" placeholder="Name or family..." oninput="filterTrees()">
+            </div>
+            <button class="dark-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">Dark Mode</button>
+        </div>
+
+        <!-- Browse View -->
+        <div id="view-browse">
+            <div class="tree-grid" id="tree-grid"></div>
+        </div>
+
+        <!-- Seasonal View -->
+        <div id="view-seasonal" style="display: none;">
+            <div class="seasonal-container">
+                <div class="seasonal-header">
+                    <div>
+                        <h2 class="nocount" style="margin: 0;">Seasonal Identification</h2>
+                        <p style="margin: 0.5rem 0 0 0; color: #666;">Focus on features visible right now</p>
+                    </div>
+                    <div class="seasonal-selector" id="seasonal-selector"></div>
+                </div>
+                <div class="seasonal-info" id="seasonal-info"></div>
+                <div class="seasonal-tree-grid" id="seasonal-tree-grid"></div>
+            </div>
+        </div>
+
+        <!-- Phylogeny View -->
+        <div id="view-phylogeny" style="display: none;">
+            <div class="phylo-container">
+                <div class="phylo-intro">
+                    <h2 class="nocount" style="margin-top: 0;">Evolutionary Relationships</h2>
+                    <p>Understanding how trees are related helps explain <strong>why</strong> they share characteristics. Trees in the same family share a common ancestor and inherited similar traits.</p>
+                    <div class="phylo-mnemonic">
+                        <strong>Memory Aid - "MAD Cap Horse":</strong> Families with <strong>OPPOSITE</strong> branching: <strong>M</strong>aple (Sapindaceae), <strong>A</strong>sh (Oleaceae), <strong>D</strong>ogwood (Cornaceae). Most other trees have alternate branching!
+                    </div>
+                </div>
+
+                <div class="phylo-legend">
+                    <div class="phylo-legend-item">
+                        <div class="phylo-legend-line major"></div>
+                        <span>Major Division</span>
+                    </div>
+                    <div class="phylo-legend-item">
+                        <div class="phylo-legend-line order"></div>
+                        <span>Order</span>
+                    </div>
+                    <div class="phylo-legend-item">
+                        <div class="phylo-legend-line family"></div>
+                        <span>Family</span>
+                    </div>
+                </div>
+
+                <div class="phylo-tree" id="phylo-tree"></div>
+            </div>
+        </div>
+
+        <!-- Compare View -->
+        <div id="view-compare" style="display: none;">
+            <div class="compare-container">
+                <div class="compare-intro">
+                    <h2 class="nocount" style="margin-top: 0;">Similar Species Comparison</h2>
+                    <p>These tree pairs are commonly confused. Study the <strong>key differences</strong> to tell them apart in the field. Features in <span class="highlight">CAPS</span> are the most diagnostic.</p>
+                </div>
+                <div class="compare-grid" id="compare-grid"></div>
+            </div>
+        </div>
+
+        <!-- Identification Key View -->
+        <div id="view-identify" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2 class="nocount" style="margin-bottom: 0;">Dichotomous Key</h2>
+                    <p style="margin: 0.5rem 0;">Answer questions about the tree you're trying to identify.</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <span id="id-match-count" style="background: #d4edda; padding: 0.5rem 1rem; border-radius: 4px; font-weight: bold;"></span>
+                    <button class="quiz-btn" style="padding: 8px 16px; font-size: 14px;" onclick="initIdentificationKey()">Start Over</button>
+                </div>
+            </div>
+            <div class="id-key" id="id-key"></div>
+            <div id="id-results" style="display: none;">
+                <h3 class="nocount">Possible Matches</h3>
+                <div class="tree-grid" id="id-matches"></div>
+            </div>
+        </div>
+
+        <!-- Practice View -->
+        <div id="view-practice" style="display: none;">
+            <div class="quiz-container">
+                <div id="practice-content">
+                    <h2 class="nocount">Identification Practice</h2>
+                    <p>Practice identifying trees like you would in the wild. You'll see a leaf image and work through the dichotomous key to identify it.</p>
+                    <button class="quiz-btn" onclick="startPractice()">Start Practice</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz View -->
+        <div id="view-quiz" style="display: none;">
+            <div class="quiz-container">
+                <div id="quiz-content">
+                    <h2 class="nocount">Test Your Knowledge</h2>
+                    <p>Quiz yourself on tree identification. You'll be asked about leaf shapes, bark patterns, and other distinguishing features.</p>
+                    <button class="quiz-btn" onclick="startQuiz()">Start Quiz</button>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="nocount">Identification Tips by Season</h2>
+        <div class="detail-grid">
+            <div class="id-feature">
+                <strong>Spring (Mar-May)</strong>
+                Look for: Flower color and shape, bud break timing, emerging leaf color. Many trees flower before leaves emerge.
+            </div>
+            <div class="id-feature">
+                <strong>Summer (Jun-Aug)</strong>
+                Look for: Leaf shape, arrangement, and texture. Bark patterns. Overall tree shape (crown form). Fruit/seed development.
+            </div>
+            <div class="id-feature">
+                <strong>Fall (Sep-Nov)</strong>
+                Look for: Fall color (very diagnostic for maples, oaks). Mature fruits and seeds. Leaf drop timing.
+            </div>
+            <div class="id-feature">
+                <strong>Winter (Dec-Feb)</strong>
+                Look for: Bark texture and color. Bud shape and arrangement. Overall silhouette. Persistent fruits or leaves.
+            </div>
+        </div>
+
+        <h2 class="nocount">Common Tree Families in Troy</h2>
+        <ul>
+            <li><strong>Aceraceae (Maples)</strong> - Opposite leaves, winged seeds (samaras). Sugar, Red, Norway, Silver maples very common.</li>
+            <li><strong>Fagaceae (Oaks & Beeches)</strong> - Alternate leaves, acorns or beechnuts. Red, White, Pin oaks; American Beech.</li>
+            <li><strong>Pinaceae (Pines & Spruces)</strong> - Needle-leaved evergreens. White Pine, Norway Spruce, Blue Spruce common.</li>
+            <li><strong>Betulaceae (Birches)</strong> - Distinctive bark, alternate leaves. Paper Birch, River Birch, Yellow Birch.</li>
+            <li><strong>Juglandaceae (Walnuts)</strong> - Compound leaves, large nuts. Black Walnut, Shagbark Hickory common.</li>
+        </ul>
+
+        <h2 class="nocount">Image Credits</h2>
+        <p>Tree photographs courtesy of the <a href="https://dendro.cnre.vt.edu/dendrology/" target="_blank">Virginia Tech Department of Forest Resources and Environmental Conservation Dendrology Collection</a>. Used for personal educational purposes.</p>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+        <span class="lightbox-nav prev" onclick="event.stopPropagation(); navLightbox(-1)">&#10094;</span>
+        <img id="lightbox-img" src="" alt="">
+        <span class="lightbox-nav next" onclick="event.stopPropagation(); navLightbox(1)">&#10095;</span>
+        <div class="lightbox-caption">
+            <div id="lightbox-title"></div>
+            <div class="lightbox-credit" id="lightbox-credit"></div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 Greg Fitzgerald. All rights reserved.</p>
+    </footer>
+
+    <script>
+    // Tree database for Troy, NY area
+    // Images from verified sources: Wikimedia Commons, iNaturalist (CC BY/CC BY-NC), USDA Plants Database
+    // All images verified as working and appropriately licensed for educational use
+    const trees = [
+        {
+            id: 1,
+            name: "Sugar Maple",
+            scientific: "Acer saccharum",
+            family: "Sapindaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "The iconic maple of New England, source of maple syrup. One of the most common trees in Troy's parks and older neighborhoods.",
+            leaves: "5-lobed with pointed tips, smooth margins (no teeth between lobes). 3-5 inches wide.",
+            bark: "Gray-brown, develops vertical plates and furrows with age. Young bark smooth.",
+            flowers: "Yellowish-green clusters in early spring, before leaves emerge.",
+            fruit: "Paired winged seeds (samaras) in fall, wings form U-shape.",
+            size: "60-80 ft tall, similar spread",
+            habitat: "Rich, moist, well-drained soils. Common in forests, parks, street plantings.",
+            fall_color: "Brilliant orange, red, and yellow - often multiple colors on same tree.",
+            lookalikes: "Norway Maple (milky sap, wider leaf angles), Red Maple (red twigs, toothed lobes)",
+            spring_tip: "Flowers appear in hanging clusters before leaves",
+            summer_tip: "Look for 5-lobed leaves with smooth margins between lobes",
+            fall_tip: "Spectacular multi-colored fall display, samaras with U-shaped wings",
+            winter_tip: "Brown pointed buds, gray furrowed bark on mature trees",
+            uses: "Maple syrup production, valuable hardwood lumber, shade tree",
+            ecology: "Important food source for wildlife; seeds eaten by squirrels, birds",
+            images: {
+                main: "https://inaturalist-open-data.s3.amazonaws.com/photos/1715893/medium.jpg",
+                leaf: "https://inaturalist-open-data.s3.amazonaws.com/photos/58808066/medium.jpg",
+                bark: "https://inaturalist-open-data.s3.amazonaws.com/photos/148038925/medium.jpg",
+                tree: "https://inaturalist-open-data.s3.amazonaws.com/photos/1715893/medium.jpg",
+                fruit: "https://inaturalist-open-data.s3.amazonaws.com/photos/57147799/medium.jpg",
+                credit: "iNaturalist (CC BY-NC)"
+            }
+        },
+        {
+            id: 2,
+            name: "Red Maple",
+            scientific: "Acer rubrum",
+            family: "Sapindaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Named for its red features in every season - red flowers, red leaf stems, red fall color, red twigs.",
+            leaves: "3-5 lobes with serrated margins (teeth between lobes). 2-6 inches wide. Red petioles.",
+            bark: "Smooth and gray when young, develops scaly ridges with age.",
+            flowers: "Red clusters appear very early spring, among first trees to bloom.",
+            fruit: "Small red samaras in spring, wings form narrow V-shape.",
+            size: "40-70 ft tall, similar spread",
+            habitat: "Adaptable - wet swamps to dry ridges. Very common street and yard tree.",
+            fall_color: "Brilliant scarlet red, sometimes yellow-orange.",
+            lookalikes: "Sugar Maple (smooth leaf margins), Silver Maple (deeply cut leaves)",
+            spring_tip: "Bright red flower clusters, very early bloomer",
+            summer_tip: "Red leaf stems (petioles), toothed leaf margins",
+            fall_tip: "Brilliant red color, one of earliest to turn",
+            winter_tip: "Red twigs and buds, smooth gray bark",
+            uses: "Popular ornamental, wood used for furniture",
+            ecology: "Early pollen source for bees, seeds eaten by birds",
+            images: {
+                main: "https://inaturalist-open-data.s3.amazonaws.com/photos/58451790/medium.jpg",
+                leaf: "https://inaturalist-open-data.s3.amazonaws.com/photos/143267542/medium.jpg",
+                bark: "https://inaturalist-open-data.s3.amazonaws.com/photos/143267550/medium.jpg",
+                tree: "https://inaturalist-open-data.s3.amazonaws.com/photos/58451782/medium.jpg",
+                fruit: "https://inaturalist-open-data.s3.amazonaws.com/photos/71389445/medium.jpg",
+                credit: "iNaturalist (CC BY-NC)"
+            }
+        },
+        {
+            id: 3,
+            name: "Norway Maple",
+            scientific: "Acer platanoides",
+            family: "Sapindaceae",
+            type: "deciduous",
+            origin: "introduced",
+            description: "European import, extremely common street tree. Considered invasive - dense shade prevents native understory growth.",
+            leaves: "5-7 lobes with pointed tips, wider angles than Sugar Maple. Milky sap when stem broken.",
+            bark: "Dark gray with interlacing ridges forming diamond pattern.",
+            flowers: "Yellow-green clusters in spring, showier than native maples.",
+            fruit: "Large samaras with wings spread nearly 180 degrees (flat line).",
+            size: "40-60 ft tall, dense rounded crown",
+            habitat: "Urban areas, parks. Tolerates pollution, compacted soil, shade.",
+            fall_color: "Yellow, sometimes dull yellow-green. Later to turn than native maples.",
+            lookalikes: "Sugar Maple (clear sap, U-shaped samara wings)",
+            spring_tip: "Bright yellow-green flower clusters",
+            summer_tip: "Break leaf stem - milky sap = Norway Maple",
+            fall_tip: "Late to change, yellow color, very wide-angled samaras",
+            winter_tip: "Large green buds, dark bark with diamond pattern",
+            uses: "Shade tree (though now discouraged due to invasiveness)",
+            ecology: "Invasive - outcompetes native species, creates dense shade",
+            images: {
+                main: "https://inaturalist-open-data.s3.amazonaws.com/photos/60153368/medium.jpg",
+                leaf: "https://inaturalist-open-data.s3.amazonaws.com/photos/60153368/medium.jpg",
+                bark: "https://inaturalist-open-data.s3.amazonaws.com/photos/60153385/medium.jpg",
+                tree: "https://inaturalist-open-data.s3.amazonaws.com/photos/10988959/medium.jpg",
+                fruit: "https://inaturalist-open-data.s3.amazonaws.com/photos/130765424/medium.jpg",
+                credit: "iNaturalist (CC BY-NC)"
+            }
+        },
+        {
+            id: 4,
+            name: "Silver Maple",
+            scientific: "Acer saccharinum",
+            family: "Sapindaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Fast-growing maple with distinctive deeply-cut leaves. Common near water and in floodplains.",
+            leaves: "5 lobes, very deeply cut (almost to center), silvery-white undersides.",
+            bark: "Silvery-gray, becomes shaggy with long loose strips on mature trees.",
+            flowers: "Reddish-green, very early spring before leaves.",
+            fruit: "Large samaras, largest of local maples, ripen in late spring.",
+            size: "50-80 ft tall, often wider than tall",
+            habitat: "Wet areas, floodplains, stream banks. Tolerates flooding.",
+            fall_color: "Pale yellow or yellow-green, not showy.",
+            lookalikes: "Red Maple (less deeply cut leaves), Freeman Maple (hybrid)",
+            spring_tip: "Among earliest maples to flower",
+            summer_tip: "Flash of silver when wind blows - silvery leaf undersides",
+            fall_tip: "Large samaras, pale yellow fall color",
+            winter_tip: "Shaggy bark on mature trees, silvery-gray color",
+            uses: "Fast shade tree (though weak wood), maple syrup possible but low sugar",
+            ecology: "Important riparian species, cavities provide wildlife habitat",
+            images: {
+                main: "https://inaturalist-open-data.s3.amazonaws.com/photos/74106583/medium.jpg",
+                leaf: "https://inaturalist-open-data.s3.amazonaws.com/photos/74106583/medium.jpg",
+                bark: "https://inaturalist-open-data.s3.amazonaws.com/photos/74106595/medium.jpg",
+                tree: "https://inaturalist-open-data.s3.amazonaws.com/photos/2051851/medium.jpg",
+                fruit: "https://inaturalist-open-data.s3.amazonaws.com/photos/77113626/medium.jpg",
+                credit: "iNaturalist (CC BY-NC)"
+            }
+        },
+        {
+            id: 5,
+            name: "Red Oak",
+            scientific: "Quercus rubra",
+            family: "Fagaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "One of the most common and fastest-growing oaks. Excellent timber tree with distinctive pointed leaf lobes.",
+            leaves: "7-11 pointed lobes with bristle tips. 5-9 inches long. Dull green above.",
+            bark: "Dark gray-brown with flat-topped ridges forming 'ski trails' pattern.",
+            flowers: "Male catkins in spring, inconspicuous female flowers.",
+            fruit: "Acorns with shallow saucer-like caps, take 2 years to mature.",
+            size: "60-80 ft tall, broad rounded crown",
+            habitat: "Well-drained upland soils, forests, parks. Moderately shade tolerant.",
+            fall_color: "Russet red to brown-red.",
+            lookalikes: "Pin Oak (drooping lower branches, deeper sinuses), Black Oak (shinier leaves)",
+            spring_tip: "Reddish new leaves, hanging catkins",
+            summer_tip: "Pointed lobes with bristle tips, flat-ridged bark",
+            fall_tip: "Russet-red color, acorns with shallow caps",
+            winter_tip: "Clustered end buds, 'ski trail' bark pattern",
+            uses: "Valuable lumber, flooring, furniture. Popular landscape tree.",
+            ecology: "Acorns important food for deer, turkeys, squirrels, jays",
+            images: {
+                main: "https://inaturalist-open-data.s3.amazonaws.com/photos/59697693/medium.jpg",
+                leaf: "https://inaturalist-open-data.s3.amazonaws.com/photos/59697693/medium.jpg",
+                bark: "https://inaturalist-open-data.s3.amazonaws.com/photos/59697709/medium.jpg",
+                tree: "https://inaturalist-open-data.s3.amazonaws.com/photos/2085880/medium.jpg",
+                fruit: "https://inaturalist-open-data.s3.amazonaws.com/photos/89916164/medium.jpg",
+                credit: "iNaturalist (CC BY-NC)"
+            }
+        },
+        {
+            id: 6,
+            name: "White Oak",
+            scientific: "Quercus alba",
+            family: "Fagaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Long-lived, stately oak with rounded leaf lobes. Can live 300-600 years. Symbol of strength.",
+            leaves: "7-9 rounded lobes (no bristle tips), deep sinuses. Bright green above, whitish below.",
+            bark: "Light gray, scaly or blocky (not ridged like Red Oak).",
+            flowers: "Male catkins in spring with new leaves.",
+            fruit: "Acorns with bumpy cap covering 1/4 of nut, mature in one season. Sweeter than red oak acorns.",
+            size: "60-80 ft tall, broad spreading crown",
+            habitat: "Well-drained uplands, mixed forests. Slow growing.",
+            fall_color: "Wine-red to brown, sometimes purple. Leaves often persist into winter.",
+            lookalikes: "Swamp White Oak (in wetlands), Bur Oak (larger acorn caps)",
+            spring_tip: "Pink-tinged new leaves unfurling",
+            summer_tip: "Rounded lobes, no bristle tips, light-colored bark",
+            fall_tip: "Wine-red color, sweet acorns, leaves may persist",
+            winter_tip: "Light gray blocky bark, persistent brown leaves",
+            uses: "Premium hardwood for barrels, furniture, flooring. Acorns edible after processing.",
+            ecology: "Keystone species - supports more caterpillar species than almost any other tree",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Quercus_alba_leaves.jpg/640px-Quercus_alba_leaves.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Quercus_alba_leaves.jpg/320px-Quercus_alba_leaves.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Quercus_alba_bark.jpg/320px-Quercus_alba_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Keeler_Oak_Tree_-_distance_photo%2C_May_2013.jpg/320px-Keeler_Oak_Tree_-_distance_photo%2C_May_2013.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Quercus_alba_acorns.jpg/320px-Quercus_alba_acorns.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 7,
+            name: "Pin Oak",
+            scientific: "Quercus palustris",
+            family: "Fagaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Distinctive pyramidal shape with drooping lower branches. Very common street and park tree.",
+            leaves: "5-7 deeply cut lobes with bristle tips, deep U-shaped sinuses nearly to midrib.",
+            bark: "Gray-brown, smooth when young, develops shallow ridges.",
+            flowers: "Catkins in spring.",
+            fruit: "Small acorns with thin saucer cap, often striped.",
+            size: "60-70 ft tall, pyramidal crown",
+            habitat: "Tolerates wet soil. Native to bottomlands but widely planted on uplands.",
+            fall_color: "Russet, bronze, or red. Dead leaves often persist all winter.",
+            lookalikes: "Red Oak (not as deeply cut), Scarlet Oak (similar but less common)",
+            spring_tip: "Bright red new leaves",
+            summer_tip: "Deeply cut leaves, distinctive drooping lower branches",
+            fall_tip: "Bronze-red color, persistent dead leaves",
+            winter_tip: "Pyramidal shape, drooping lower branches, persistent leaves",
+            uses: "Popular ornamental, good for wet sites",
+            ecology: "Acorns eaten by waterfowl (native to wetlands)",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Quercus_palustris_leaves.jpg/640px-Quercus_palustris_leaves.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Quercus_palustris_leaves.jpg/320px-Quercus_palustris_leaves.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Quercus_palustris_bark.jpg/320px-Quercus_palustris_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Pin_Oak_Quercus_palustris_Tree_2000px.jpg/320px-Pin_Oak_Quercus_palustris_Tree_2000px.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Quercus_palustris_acorn.jpg/320px-Quercus_palustris_acorn.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 8,
+            name: "Eastern White Pine",
+            scientific: "Pinus strobus",
+            family: "Pinaceae",
+            type: "evergreen",
+            origin: "native",
+            description: "Largest northeastern conifer. Soft, blue-green needles in bundles of 5. State tree of Maine.",
+            leaves: "Needles in bundles of 5, soft and flexible, 3-5 inches long, blue-green.",
+            bark: "Gray-green and smooth when young, dark and deeply furrowed when mature.",
+            flowers: "Male cones yellow, female cones at branch tips.",
+            fruit: "Long slender cones (4-8 inches), curved, resinous.",
+            size: "80-100+ ft tall, irregular crown on mature trees",
+            habitat: "Adaptable - dry sandy soils to moist valleys. Pioneer species.",
+            fall_color: "Evergreen, but sheds oldest needles (turn yellow) in fall.",
+            lookalikes: "No other 5-needle pine native to region",
+            spring_tip: "New 'candles' of light green growth at branch tips",
+            summer_tip: "Count needles in bundle - 5 = White Pine",
+            fall_tip: "Inner needles turn yellow and drop (normal)",
+            winter_tip: "Soft blue-green needles, irregular crown shape",
+            uses: "Lumber, Christmas trees, ornamental. Historic ship mast timber.",
+            ecology: "Seeds eaten by many birds and small mammals",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Pinus_strobus_cones.jpg/640px-Pinus_strobus_cones.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Pinus_strobus_needles.jpg/320px-Pinus_strobus_needles.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Pinus_strobus_bark.jpg/320px-Pinus_strobus_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Pinus_strobus_tree.jpg/320px-Pinus_strobus_tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Pinus_strobus_cones.jpg/320px-Pinus_strobus_cones.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 9,
+            name: "Norway Spruce",
+            scientific: "Picea abies",
+            family: "Pinaceae",
+            type: "evergreen",
+            origin: "introduced",
+            description: "Large spruce with distinctive drooping branchlets. Very common ornamental and windbreak tree.",
+            leaves: "Short needles (3/4 inch) attached singly, 4-sided, sharp. Dark green.",
+            bark: "Gray-brown, scaly, becoming furrowed with age.",
+            flowers: "Male cones red-purple, female cones at top of tree.",
+            fruit: "Large pendant cones (4-7 inches), longest of spruces.",
+            size: "80-100 ft tall, pyramidal with drooping branchlets",
+            habitat: "Adaptable to various soils. Planted as ornamental, windbreak.",
+            fall_color: "Evergreen.",
+            lookalikes: "Blue Spruce (blue-gray needles), White Spruce (shorter cones)",
+            spring_tip: "Bright green new growth at branch tips",
+            summer_tip: "Drooping branchlets, large cones",
+            fall_tip: "Large cones (4-7 inches) hang down",
+            winter_tip: "Distinctive weeping form, persistent cones",
+            uses: "Ornamental, windbreaks, Christmas trees. Wood used for instruments.",
+            ecology: "Provides winter cover for birds",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Picea_abies_cone.jpg/640px-Picea_abies_cone.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Picea_abies_shoot_with_buds%2C_bud_scale_scar%2C_and_needles.jpg/320px-Picea_abies_shoot_with_buds%2C_bud_scale_scar%2C_and_needles.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Picea_abies_bark.jpg/320px-Picea_abies_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Picea_abies_tree.jpg/320px-Picea_abies_tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Picea_abies_cone.jpg/320px-Picea_abies_cone.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 10,
+            name: "Colorado Blue Spruce",
+            scientific: "Picea pungens",
+            family: "Pinaceae",
+            type: "evergreen",
+            origin: "introduced",
+            description: "Popular ornamental with distinctive blue-gray needles. Native to Rocky Mountains.",
+            leaves: "Stiff, sharp needles (3/4-1 inch), blue-gray to silvery-blue. Very prickly.",
+            bark: "Gray-brown, scaly.",
+            flowers: "Orange-red male cones, purplish female cones.",
+            fruit: "Light brown pendant cones, 2-4 inches long.",
+            size: "30-60 ft tall, dense pyramidal form",
+            habitat: "Planted as ornamental. Tolerates drought, urban conditions.",
+            fall_color: "Evergreen, maintains blue color.",
+            lookalikes: "Norway Spruce (green needles), White Spruce (green, less prickly)",
+            spring_tip: "New growth slightly lighter blue",
+            summer_tip: "Blue-gray color, very sharp stiff needles",
+            fall_tip: "Tan papery cones",
+            winter_tip: "Keeps blue color, dense pyramidal shape",
+            uses: "Popular ornamental, especially cultivar 'Hoopsii' and others",
+            ecology: "Provides winter cover and seeds for birds",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Picea_pungens_tree.jpg/640px-Picea_pungens_tree.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Picea_pungens_branch.jpg/320px-Picea_pungens_branch.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Picea_pungens_bark.jpg/320px-Picea_pungens_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Picea_pungens_tree.jpg/320px-Picea_pungens_tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Picea_pungens_cone.jpg/320px-Picea_pungens_cone.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 11,
+            name: "American Beech",
+            scientific: "Fagus grandifolia",
+            family: "Fagaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Elegant tree with smooth gray bark and persistent leaves. Bark often carved with graffiti (harmful to tree).",
+            leaves: "Oval, pointed tip, coarse teeth. 3-5 inches long. Papery texture.",
+            bark: "Smooth, light gray, even on old trees. Never develops furrows.",
+            flowers: "Male flowers in round heads, female inconspicuous.",
+            fruit: "Triangular nuts in spiny husk (beechnuts), edible.",
+            size: "60-80 ft tall, broad spreading crown",
+            habitat: "Rich, moist forests. Very shade tolerant. Often forms pure stands.",
+            fall_color: "Golden bronze. Dead leaves persist through winter.",
+            lookalikes: "No other local tree has smooth gray bark at maturity",
+            spring_tip: "Silky, folded leaves emerging from long pointed buds",
+            summer_tip: "Smooth gray bark (diagnostic), coarse-toothed leaves",
+            fall_tip: "Golden-bronze color, leaves persist all winter",
+            winter_tip: "Smooth gray bark, persistent tan leaves, long pointed buds",
+            uses: "Furniture, flooring. Nuts edible and tasty.",
+            ecology: "Beechnuts important food for wildlife; turkey, bear, deer, squirrels",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Fagus_grandifolia_leaves.jpg/640px-Fagus_grandifolia_leaves.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Fagus_grandifolia_leaves.jpg/320px-Fagus_grandifolia_leaves.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Fagus_grandifolia_bark.jpg/320px-Fagus_grandifolia_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Fagus_grandifolia_beech.jpg/320px-Fagus_grandifolia_beech.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Fagus_grandifolia_nuts.jpg/320px-Fagus_grandifolia_nuts.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 12,
+            name: "Paper Birch",
+            scientific: "Betula papyrifera",
+            family: "Betulaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "The white-barked birch of postcards. Bark peels in papery layers. Native to northern forests.",
+            leaves: "Oval to triangular, doubly serrated, 2-4 inches long. Dark green above.",
+            bark: "White, peeling in papery horizontal strips. Orange-brown underneath.",
+            flowers: "Male catkins hang in clusters, female catkins upright.",
+            fruit: "Small winged nutlets in catkins, dispersed by wind.",
+            size: "50-70 ft tall, oval crown, often multi-stemmed",
+            habitat: "Cool, moist sites. Pioneer species after disturbance. At southern range limit in Troy.",
+            fall_color: "Bright yellow.",
+            lookalikes: "Gray Birch (chalky white, triangular leaves), European White Birch (weeping)",
+            spring_tip: "Long male catkins hang down",
+            summer_tip: "White peeling bark, oval doubly-serrated leaves",
+            fall_tip: "Bright yellow color",
+            winter_tip: "White bark stands out, small catkins visible",
+            uses: "Ornamental, traditional birch bark canoes and containers",
+            ecology: "Pioneer species, seeds eaten by small birds",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Betula_papyrifera_bark.jpg/640px-Betula_papyrifera_bark.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Betula_papyrifera_leaves.jpg/320px-Betula_papyrifera_leaves.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Betula_papyrifera_bark.jpg/320px-Betula_papyrifera_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Betula_papyrifera_tree.jpg/320px-Betula_papyrifera_tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Betula_papyrifera_catkins.jpg/320px-Betula_papyrifera_catkins.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 13,
+            name: "River Birch",
+            scientific: "Betula nigra",
+            family: "Betulaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Distinctive salmon-pink to reddish-brown peeling bark. Only birch commonly planted in warmer climates.",
+            leaves: "Doubly serrated, triangular to diamond-shaped, 2-3 inches.",
+            bark: "Salmon-pink to reddish-brown, exfoliating in curly papery layers.",
+            flowers: "Male catkins in clusters, female catkins smaller.",
+            fruit: "Small nutlets in erect catkins, ripen in late spring (unusual timing).",
+            size: "40-70 ft tall, often multi-stemmed",
+            habitat: "Floodplains, stream banks. Tolerates wet soil and heat.",
+            fall_color: "Yellow.",
+            lookalikes: "Paper Birch (white bark), Yellow Birch (yellowish bark, wintergreen scent)",
+            spring_tip: "Catkins mature early, seeds ripen by late spring",
+            summer_tip: "Salmon-pink peeling bark, heat tolerant birch",
+            fall_tip: "Yellow color, bark color intensifies",
+            winter_tip: "Reddish-brown peeling bark, often multi-stemmed",
+            uses: "Very popular ornamental, especially 'Heritage' cultivar",
+            ecology: "Stabilizes stream banks, seeds eaten by birds",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Betula_nigra_bark.jpg/640px-Betula_nigra_bark.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Betula_nigra_leaves.jpg/320px-Betula_nigra_leaves.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Betula_nigra_bark.jpg/320px-Betula_nigra_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Betula_nigra_tree.jpg/320px-Betula_nigra_tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Betula_nigra_catkin.jpg/320px-Betula_nigra_catkin.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 14,
+            name: "Black Walnut",
+            scientific: "Juglans nigra",
+            family: "Juglandaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Valuable timber tree with large compound leaves. Produces allelopathic chemical (juglone) that inhibits many plants.",
+            leaves: "Pinnately compound, 15-23 leaflets, 1-2 ft long. Aromatic when crushed.",
+            bark: "Dark brown to black, deeply furrowed into diamond pattern.",
+            flowers: "Male catkins, female flowers in small clusters.",
+            fruit: "Large round nut in thick green husk, stains hands brown.",
+            size: "70-100 ft tall, broad open crown",
+            habitat: "Rich bottomlands, but adapts to uplands. Common in old farmsteads.",
+            fall_color: "Yellow, drops early.",
+            lookalikes: "Butternut (ridged nut), Hickories (different bark, fewer leaflets)",
+            spring_tip: "Late to leaf out, compound leaves unfurl",
+            summer_tip: "Large compound leaves, aromatic, round green fruits",
+            fall_tip: "Leaves drop early, nuts fall in husks",
+            winter_tip: "Dark furrowed bark, chambered pith in twigs",
+            uses: "Premium furniture wood, gunstocks. Nuts edible, very flavorful.",
+            ecology: "Important food for squirrels; allelopathic to tomatoes, apples, others",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Juglans_nigra_leaves.jpg/640px-Juglans_nigra_leaves.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Juglans_nigra_leaves.jpg/320px-Juglans_nigra_leaves.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Juglans_nigra_bark.jpg/320px-Juglans_nigra_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Juglans_nigra_tree.jpg/320px-Juglans_nigra_tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Juglans_nigra_nut.jpg/320px-Juglans_nigra_nut.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 15,
+            name: "Shagbark Hickory",
+            scientific: "Carya ovata",
+            family: "Juglandaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Named for its distinctive shaggy bark with long loose plates. Produces delicious edible nuts.",
+            leaves: "Pinnately compound, 5 leaflets (occasionally 7). Terminal leaflet largest.",
+            bark: "Gray, separating into long loose plates that curve away from trunk - shaggy.",
+            flowers: "Male catkins in threes, female flowers in short spikes.",
+            fruit: "Thick-husked nut that splits into 4 sections, edible sweet kernel.",
+            size: "60-80 ft tall, irregular narrow crown",
+            habitat: "Rich upland woods, well-drained soils.",
+            fall_color: "Golden yellow.",
+            lookalikes: "Pignut Hickory (tight bark), Mockernut Hickory (9 leaflets)",
+            spring_tip: "Large scaly buds, late to leaf out",
+            summer_tip: "5-leaflet compound leaves, shaggy bark",
+            fall_tip: "Golden yellow color, thick-husked nuts",
+            winter_tip: "Unmistakable shaggy bark, large end buds",
+            uses: "Excellent firewood, smoking meat. Nuts highly prized.",
+            ecology: "Nuts eaten by squirrels, mice, bears, deer",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Carya_ovata_bark.jpg/640px-Carya_ovata_bark.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Carya_ovata_leaves.jpg/320px-Carya_ovata_leaves.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Carya_ovata_bark.jpg/320px-Carya_ovata_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Shagbark_Hickory_Carya_ovata_Tree_2448px.jpg/320px-Shagbark_Hickory_Carya_ovata_Tree_2448px.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Carya_ovata_nut.jpg/320px-Carya_ovata_nut.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 16,
+            name: "Black Cherry",
+            scientific: "Prunus serotina",
+            family: "Rosaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Most valuable native cherry. Distinctive 'burnt potato chip' bark. Leaves and bark contain cyanide compounds.",
+            leaves: "Simple, finely serrated, 2-5 inches, dark shiny green. Distinctive smell when crushed.",
+            bark: "Reddish-brown, becomes very dark with scaly plates like burnt potato chips.",
+            flowers: "White, in long drooping clusters (racemes) in late spring.",
+            fruit: "Small dark cherries in clusters, bitter but edible.",
+            size: "50-80 ft tall in forest, shorter in open",
+            habitat: "Various - forest edges, old fields, fence rows. Pioneer species.",
+            fall_color: "Yellow to red.",
+            lookalikes: "Chokecherry (shrubby), Pin Cherry (shiny red bark)",
+            spring_tip: "Long clusters of white flowers",
+            summer_tip: "Shiny leaves, 'burnt chip' bark on mature trees",
+            fall_tip: "Dark fruit clusters, yellow-red fall color",
+            winter_tip: "Dark scaly bark, reddish-brown on young branches",
+            uses: "Premium furniture and cabinet wood. Fruit used for jelly, wine.",
+            ecology: "Fruit eaten by many birds; important wildlife food",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Prunus_serotina_flowers.jpg/640px-Prunus_serotina_flowers.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Prunus_serotina_leaves.jpg/320px-Prunus_serotina_leaves.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Prunus_serotina_bark.jpg/320px-Prunus_serotina_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Prunus_serotina_tree.jpg/320px-Prunus_serotina_tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Prunus_serotina_fruit.jpg/320px-Prunus_serotina_fruit.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 17,
+            name: "Eastern Hemlock",
+            scientific: "Tsuga canadensis",
+            family: "Pinaceae",
+            type: "evergreen",
+            origin: "native",
+            description: "Graceful native evergreen with short flat needles. Threatened by invasive Hemlock Woolly Adelgid.",
+            leaves: "Short flat needles (1/2 inch), two white stripes underneath. Attached by tiny stems.",
+            bark: "Reddish-brown, deeply furrowed with flat-topped ridges.",
+            flowers: "Small, inconspicuous.",
+            fruit: "Small oval cones (3/4 inch), hang from branch tips.",
+            size: "60-70 ft tall, graceful pyramidal form with drooping branch tips",
+            habitat: "Cool, moist ravines and north-facing slopes. Very shade tolerant.",
+            fall_color: "Evergreen.",
+            lookalikes: "Firs (upright cones), Yew (red fruit, larger needles)",
+            spring_tip: "Bright green new growth at branch tips",
+            summer_tip: "Short flat needles with white stripes below, small cones",
+            fall_tip: "Small cones at branch tips",
+            winter_tip: "Graceful drooping form, short needles",
+            uses: "Ornamental, bark historically used for tanning leather",
+            ecology: "Important habitat tree; threatened by Hemlock Woolly Adelgid (check for white 'cotton' on branches)",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Tsuga_canadensis_foliage.jpg/640px-Tsuga_canadensis_foliage.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Tsuga_canadensis_foliage.jpg/320px-Tsuga_canadensis_foliage.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Tsuga_canadensis_bark.jpg/320px-Tsuga_canadensis_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Tsuga_canadensis_tree.jpg/320px-Tsuga_canadensis_tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Tsuga_canadensis_cones.jpg/320px-Tsuga_canadensis_cones.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 18,
+            name: "American Elm",
+            scientific: "Ulmus americana",
+            family: "Ulmaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Once the iconic American street tree, devastated by Dutch Elm Disease. Vase-shaped crown is distinctive.",
+            leaves: "Oval, doubly serrated, asymmetrical base. 3-6 inches long.",
+            bark: "Gray-brown, deeply furrowed with interlacing ridges.",
+            flowers: "Small reddish-brown, in clusters before leaves emerge.",
+            fruit: "Flat, oval, papery samaras with notched tip. Ripen before leaves fully expand.",
+            size: "60-80 ft tall, classic vase-shaped crown",
+            habitat: "Rich bottomlands, but once planted everywhere.",
+            fall_color: "Yellow.",
+            lookalikes: "Slippery Elm (hairy leaves), Siberian Elm (smaller leaves)",
+            spring_tip: "Flowers before leaves, papery seeds mature early",
+            summer_tip: "Asymmetrical leaf base, vase-shaped crown",
+            fall_tip: "Yellow fall color",
+            winter_tip: "Vase shape if mature, deeply furrowed bark",
+            uses: "Street tree (disease-resistant cultivars now available)",
+            ecology: "Reduced populations still important for wildlife; seeds eaten by birds",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Ulmus_americana_leaves.jpg/640px-Ulmus_americana_leaves.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Ulmus_americana_leaves.jpg/320px-Ulmus_americana_leaves.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Ulmus_americana_bark.jpg/320px-Ulmus_americana_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/American_Elm_Tree.jpg/320px-American_Elm_Tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Ulmus_americana_samaras.jpg/320px-Ulmus_americana_samaras.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 19,
+            name: "White Ash",
+            scientific: "Fraxinus americana",
+            family: "Oleaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Once common, now devastated by Emerald Ash Borer. Opposite compound leaves, winged seeds.",
+            leaves: "Pinnately compound, 7 leaflets (occasionally 5-9), opposite. Whitish underneath.",
+            bark: "Gray with diamond-pattern furrows, becoming corky ridges.",
+            flowers: "Purple clusters before leaves emerge.",
+            fruit: "Single-winged samara, in clusters, persistent.",
+            size: "60-80 ft tall, dense oval crown",
+            habitat: "Rich moist woods, also uplands. Widely planted as street tree.",
+            fall_color: "Yellow to purple - often deep purple, unusual for hardwoods.",
+            lookalikes: "Green Ash (green leaf undersides), Black Ash (leaflets sessile)",
+            spring_tip: "Purple flower clusters before leaves",
+            summer_tip: "Opposite compound leaves, whitish undersides",
+            fall_tip: "Yellow to purple fall color, persistent samaras",
+            winter_tip: "Opposite branching, corky bark ridges",
+            uses: "Baseball bats, tool handles, furniture. Now scarce due to EAB.",
+            ecology: "Emerald Ash Borer has killed millions; check for D-shaped exit holes, woodpecker damage",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Fraxinus_americana_leaves.jpg/640px-Fraxinus_americana_leaves.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Fraxinus_americana_leaves.jpg/320px-Fraxinus_americana_leaves.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Fraxinus_americana_bark.jpg/320px-Fraxinus_americana_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Fraxinus_americana_tree.jpg/320px-Fraxinus_americana_tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Fraxinus_americana_seeds.jpg/320px-Fraxinus_americana_seeds.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 20,
+            name: "Eastern Cottonwood",
+            scientific: "Populus deltoides",
+            family: "Salicaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Massive, fast-growing tree of floodplains. Female trees produce cottony seeds that blanket neighborhoods.",
+            leaves: "Triangular (deltoid), coarsely toothed, 3-5 inches. Flattened leaf stem causes rustling in breeze.",
+            bark: "Smooth and yellowish when young, deeply furrowed with thick ridges when mature.",
+            flowers: "Hanging catkins before leaves, male and female on separate trees.",
+            fruit: "Female trees release masses of cottony seeds in early summer.",
+            size: "80-100 ft tall, massive spreading crown",
+            habitat: "Floodplains, stream banks, disturbed areas. Pioneer species.",
+            fall_color: "Yellow.",
+            lookalikes: "Quaking Aspen (smaller, rounder leaves), Lombardy Poplar (columnar form)",
+            spring_tip: "Catkins before leaves, sticky fragrant buds",
+            summer_tip: "Triangular leaves, cotton-covered seeds from female trees",
+            fall_tip: "Yellow color",
+            winter_tip: "Massive size, thick furrowed bark, sticky buds",
+            uses: "Pulpwood. Male clones sometimes planted to avoid cotton.",
+            ecology: "Fast growth provides quick habitat; cavities important for wildlife",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Populus_deltoides_leaves.jpg/640px-Populus_deltoides_leaves.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Populus_deltoides_leaves.jpg/320px-Populus_deltoides_leaves.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Populus_deltoides_bark.jpg/320px-Populus_deltoides_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Cottonwood_tree.jpg/320px-Cottonwood_tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Populus_deltoides_cotton.jpg/320px-Populus_deltoides_cotton.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 21,
+            name: "White Spruce",
+            scientific: "Picea glauca",
+            family: "Pinaceae",
+            type: "evergreen",
+            origin: "native",
+            description: "Native spruce with blue-green needles. More tolerant of heat and drought than Red Spruce.",
+            leaves: "Four-sided needles, 1/2-3/4 inch, blue-green. Unpleasant smell when crushed (skunk-like).",
+            bark: "Thin, gray-brown, scaly.",
+            flowers: "Male cones reddish, female cones green to purple.",
+            fruit: "Slender cylindrical cones, 1.5-2.5 inches, fall intact.",
+            size: "40-60 ft tall, narrow conical form",
+            habitat: "Cool moist sites, but more adaptable than other native spruces.",
+            fall_color: "Evergreen.",
+            lookalikes: "Blue Spruce (bluer, sharper), Norway Spruce (larger cones, drooping)",
+            spring_tip: "Light green new growth",
+            summer_tip: "Crushed needles smell skunky, smaller cones than Norway Spruce",
+            fall_tip: "Cones mature and drop",
+            winter_tip: "Narrow form, blue-green color",
+            uses: "Pulpwood, ornamental, windbreaks",
+            ecology: "Seeds eaten by crossbills, siskins, squirrels",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Picea_glauca_tree.jpg/640px-Picea_glauca_tree.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Picea_glauca_foliage.jpg/320px-Picea_glauca_foliage.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Picea_glauca_bark.jpg/320px-Picea_glauca_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Picea_glauca_tree.jpg/320px-Picea_glauca_tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Picea_glauca_cones.jpg/320px-Picea_glauca_cones.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 22,
+            name: "Tulip Tree",
+            scientific: "Liriodendron tulipifera",
+            family: "Magnoliaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Tallest eastern hardwood. Distinctive tulip-shaped flowers and unique 4-lobed leaves.",
+            leaves: "Unique shape - 4 lobes with flat or notched tip (looks like a cat face). 4-6 inches.",
+            bark: "Light gray, becomes deeply furrowed with white in grooves.",
+            flowers: "Large tulip-shaped, yellow-green with orange band. High in canopy, often unseen.",
+            fruit: "Cone-like aggregate of samaras, persist into winter.",
+            size: "80-120 ft tall, straight tall trunk",
+            habitat: "Rich moist soils, coves, valleys. Does not tolerate flooding.",
+            fall_color: "Golden yellow.",
+            lookalikes: "None - leaf shape is unique",
+            spring_tip: "Tulip-shaped flowers, look for fallen petals",
+            summer_tip: "Unique 4-lobed flat-tipped leaves",
+            fall_tip: "Golden yellow color, cone-like fruit clusters",
+            winter_tip: "Straight trunk, deeply furrowed bark, persistent fruits",
+            uses: "Furniture, plywood, pulp. Important honey tree.",
+            ecology: "Flowers important nectar source for bees",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Liriodendron_tulipifera_flower.jpg/640px-Liriodendron_tulipifera_flower.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Liriodendron_tulipifera_leaves.jpg/320px-Liriodendron_tulipifera_leaves.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Liriodendron_tulipifera_bark.jpg/320px-Liriodendron_tulipifera_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Liriodendron_tulipifera_tree.jpg/320px-Liriodendron_tulipifera_tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Liriodendron_tulipifera_flower.jpg/320px-Liriodendron_tulipifera_flower.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 23,
+            name: "Flowering Dogwood",
+            scientific: "Cornus florida",
+            family: "Cornaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Small understory tree with showy white 'flowers' (actually bracts). At northern edge of range in Troy.",
+            leaves: "Oval, pointed, 3-6 inches. Distinctive parallel veins curving toward tip.",
+            bark: "Broken into small square blocks - alligator-like pattern.",
+            flowers: "Small greenish center surrounded by 4 large white bracts (petal-like). Spring.",
+            fruit: "Bright red oval berries in clusters. Fall.",
+            size: "15-30 ft tall, horizontal branching pattern",
+            habitat: "Forest understory, edges. Acid soils, partial shade.",
+            fall_color: "Red to purplish-red.",
+            lookalikes: "Kousa Dogwood (pointed bracts, fruits in fall)",
+            spring_tip: "Showy white bracts, flower buds visible all winter",
+            summer_tip: "Alligator bark, horizontal branches, parallel leaf veins",
+            fall_tip: "Red berries, red-purple fall color",
+            winter_tip: "Blocky bark, distinctive button-shaped flower buds",
+            uses: "Ornamental (though declining due to anthracnose disease)",
+            ecology: "Berries high in fat, important for migrating birds",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Cornus_florida_flowers.jpg/640px-Cornus_florida_flowers.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Cornus_florida_leaves.jpg/320px-Cornus_florida_leaves.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Cornus_florida_bark.jpg/320px-Cornus_florida_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Flowering_Dogwood_Cornus_florida_Tree.jpg/320px-Flowering_Dogwood_Cornus_florida_Tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Cornus_florida_fruit.jpg/320px-Cornus_florida_fruit.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 24,
+            name: "Honey Locust",
+            scientific: "Gleditsia triacanthos",
+            family: "Fabaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Wild form has fierce branched thorns. Thornless cultivars common as street trees.",
+            leaves: "Bipinnately compound (feathery), 6-14 inches. Very fine texture.",
+            bark: "Gray-brown, scaly with clusters of branched thorns on wild form.",
+            flowers: "Small greenish-white, fragrant, not showy.",
+            fruit: "Long twisted brown pods (8-18 inches), sweet pulp inside.",
+            size: "30-70 ft tall, open spreading crown",
+            habitat: "Floodplains, limestone soils. Widely planted as street tree.",
+            fall_color: "Yellow, drops early.",
+            lookalikes: "Black Locust (simple compound leaves, white flowers, shorter pods)",
+            spring_tip: "Fine feathery leaves emerge late",
+            summer_tip: "Very fine-textured foliage, light shade, thorns if wild type",
+            fall_tip: "Long twisted seed pods, early leaf drop",
+            winter_tip: "Flat pods persist, wicked thorns on wild trees",
+            uses: "Street tree (thornless cultivars), honey from flowers",
+            ecology: "Pods eaten by deer, cattle, squirrels. Thorns evolved to deter megafauna",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Gleditsia_triacanthos_thorns.jpg/640px-Gleditsia_triacanthos_thorns.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Gleditsia_triacanthos_leaves.jpg/320px-Gleditsia_triacanthos_leaves.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Gleditsia_triacanthos_thorns.jpg/320px-Gleditsia_triacanthos_thorns.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Gleditsia_triacanthos_tree.jpg/320px-Gleditsia_triacanthos_tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Gleditsia_triacanthos_pods.jpg/320px-Gleditsia_triacanthos_pods.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 25,
+            name: "Black Locust",
+            scientific: "Robinia pseudoacacia",
+            family: "Fabaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Fast-growing tree with fragrant white flowers. Extremely rot-resistant wood. Can be invasive.",
+            leaves: "Pinnately compound, 7-19 oval leaflets. Paired thorns at base of leaves.",
+            bark: "Dark gray-brown, deeply furrowed with fibrous interlacing ridges.",
+            flowers: "White, fragrant, pea-like, in hanging clusters (racemes). Late spring.",
+            fruit: "Flat brown pods 2-4 inches long, persist into winter.",
+            size: "40-80 ft tall, irregular open crown",
+            habitat: "Disturbed areas, old fields, roadsides. Aggressive spreader.",
+            fall_color: "Yellow, drops early.",
+            lookalikes: "Honey Locust (feathery bipinnate leaves, longer pods)",
+            spring_tip: "Fragrant white flower clusters, late bloomer",
+            summer_tip: "Compound leaves with paired thorns, deeply furrowed bark",
+            fall_tip: "Short flat pods, early leaf drop",
+            winter_tip: "Deeply furrowed bark, persistent pods, thorns",
+            uses: "Fence posts (very rot resistant), firewood, honey",
+            ecology: "Fixes nitrogen in soil; flowers important for bees",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Robinia_pseudoacacia_flowers.jpg/640px-Robinia_pseudoacacia_flowers.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Robinia_pseudoacacia_leaves.jpg/320px-Robinia_pseudoacacia_leaves.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Robinia_pseudoacacia_bark.jpg/320px-Robinia_pseudoacacia_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Robinia_pseudoacacia_tree.jpg/320px-Robinia_pseudoacacia_tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Robinia_pseudoacacia_flowers.jpg/320px-Robinia_pseudoacacia_flowers.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 26,
+            name: "Sassafras",
+            scientific: "Sassafras albidum",
+            family: "Lauraceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Unique tree with 3 different leaf shapes on same tree. All parts aromatic. Root beer was originally made from roots.",
+            leaves: "Three shapes: unlobed oval, 2-lobed (mitten), 3-lobed. All three often on same branch.",
+            bark: "Reddish-brown, becoming deeply furrowed. Aromatic.",
+            flowers: "Yellow-green clusters in spring before leaves. Males and females on separate trees.",
+            fruit: "Dark blue berry on bright red stalk. Fall.",
+            size: "30-60 ft tall, irregular outline",
+            habitat: "Old fields, forest edges, disturbed areas. Pioneer species.",
+            fall_color: "Orange, red, yellow, purple - often multiple colors.",
+            lookalikes: "None - three leaf shapes unique",
+            spring_tip: "Yellow-green flower clusters, aromatic twigs",
+            summer_tip: "Three different leaf shapes, spicy scent when crushed",
+            fall_tip: "Multi-colored fall display, blue berries on red stalks",
+            winter_tip: "Green twigs, aromatic when scratched",
+            uses: "Traditional root beer flavoring (now banned), tea from leaves (file gumbo)",
+            ecology: "Fruits high in fat, eaten by many birds including Wild Turkey",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Sassafras_albidum_leaves.jpg/640px-Sassafras_albidum_leaves.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Sassafras_albidum_leaves.jpg/320px-Sassafras_albidum_leaves.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Sassafras_albidum_bark.jpg/320px-Sassafras_albidum_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Sassafras_albidum_tree.jpg/320px-Sassafras_albidum_tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Sassafras_albidum_fruit.jpg/320px-Sassafras_albidum_fruit.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 27,
+            name: "Sycamore",
+            scientific: "Platanus occidentalis",
+            family: "Platanaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Massive tree with distinctive white mottled bark. The largest eastern hardwood by trunk diameter.",
+            leaves: "Maple-like, 3-5 lobes, 4-9 inches wide. Coarse teeth.",
+            bark: "Brown bark flakes off revealing white, cream, green patches. Very distinctive.",
+            flowers: "Ball-shaped clusters, inconspicuous.",
+            fruit: "Ball-shaped cluster (buttonball) 1 inch diameter, hangs on long stalk through winter.",
+            size: "75-100 ft tall, massive spreading crown",
+            habitat: "Floodplains, stream banks. Tolerates flooding.",
+            fall_color: "Brown, not showy.",
+            lookalikes: "London Planetree (hybrid, 2 fruit balls per stalk)",
+            spring_tip: "Large fuzzy leaves emerge",
+            summer_tip: "White patchy bark (diagnostic), very large leaves",
+            fall_tip: "Buttonballs persist, bark stands out after leaf drop",
+            winter_tip: "Unmistakable white mottled bark, hanging buttonballs",
+            uses: "Furniture (difficult to work), shade tree",
+            ecology: "Cavities in old trees important for wildlife",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Platanus_occidentalis_bark.jpg/640px-Platanus_occidentalis_bark.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Platanus_occidentalis_leaf.jpg/320px-Platanus_occidentalis_leaf.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Platanus_occidentalis_bark.jpg/320px-Platanus_occidentalis_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Platanus_occidentalis_tree.jpg/320px-Platanus_occidentalis_tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Platanus_occidentalis_fruit.jpg/320px-Platanus_occidentalis_fruit.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 28,
+            name: "London Planetree",
+            scientific: "Platanus x acerifolia",
+            family: "Platanaceae",
+            type: "deciduous",
+            origin: "introduced",
+            description: "Hybrid between American Sycamore and Oriental Plane. Very common street tree, tolerates pollution.",
+            leaves: "Maple-like, 3-5 lobes, smaller than Sycamore. 5-10 inches.",
+            bark: "Mottled like Sycamore, but tends to have more olive and cream coloration.",
+            flowers: "Ball-shaped clusters.",
+            fruit: "2-3 buttonballs per stalk (vs. 1 for American Sycamore).",
+            size: "70-100 ft tall, broad spreading crown",
+            habitat: "Urban areas, very pollution tolerant. Common street tree.",
+            fall_color: "Yellow-brown.",
+            lookalikes: "American Sycamore (1 fruit ball per stalk, larger leaves)",
+            spring_tip: "Multiple flower clusters per stalk",
+            summer_tip: "Mottled bark, 2-3 fruit balls per stalk developing",
+            fall_tip: "Multiple buttonballs per stalk visible",
+            winter_tip: "Mottled bark, 2-3 fruit balls per hanging stalk",
+            uses: "Excellent urban tree, tolerates harsh conditions",
+            ecology: "Less wildlife value than native Sycamore",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Platanus_acerifolia_bark.jpg/640px-Platanus_acerifolia_bark.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Platanus_acerifolia_leaf.jpg/320px-Platanus_acerifolia_leaf.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Platanus_acerifolia_bark.jpg/320px-Platanus_acerifolia_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Platanus_acerifolia_tree.jpg/320px-Platanus_acerifolia_tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Platanus_acerifolia_fruit.jpg/320px-Platanus_acerifolia_fruit.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 29,
+            name: "Northern Red Oak",
+            scientific: "Quercus rubra",
+            family: "Fagaceae",
+            type: "deciduous",
+            origin: "native",
+            description: "Important timber tree and food source for wildlife. Fast growing for an oak.",
+            leaves: "7-11 bristle-tipped lobes, sinuses cut 1/3 to 1/2 to midrib.",
+            bark: "Dark gray-brown with flat-topped ridges forming ski-trail pattern.",
+            flowers: "Male catkins, female flowers tiny.",
+            fruit: "Acorn with shallow saucer cap covering 1/4 of nut.",
+            size: "60-80 ft tall, broad rounded crown",
+            habitat: "Upland forests, adaptable to various soils.",
+            fall_color: "Russet red to red-brown.",
+            lookalikes: "Pin Oak (deeply cut lobes), Black Oak (shinier leaves)",
+            spring_tip: "Reddish new leaves, hanging catkins",
+            summer_tip: "Pointed lobes with bristle tips, ski-trail bark",
+            fall_tip: "Red-brown color, acorns with shallow caps",
+            winter_tip: "Clustered buds at twig tips, flat-ridged bark",
+            uses: "Lumber, flooring, furniture, firewood",
+            ecology: "Acorns feed deer, turkey, squirrels, jays, mice",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Quercus_rubra_leaf.jpg/640px-Quercus_rubra_leaf.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Quercus_rubra_leaf.jpg/320px-Quercus_rubra_leaf.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Quercus_rubra_bark.jpg/320px-Quercus_rubra_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Quercus_rubra_%40_Tortworth_Court.jpg/320px-Quercus_rubra_%40_Tortworth_Court.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Quercus_rubra_acorn.jpg/320px-Quercus_rubra_acorn.jpg",
+                credit: "Wikimedia Commons"
+            }
+        },
+        {
+            id: 30,
+            name: "Ginkgo",
+            scientific: "Ginkgo biloba",
+            family: "Ginkgoaceae",
+            type: "deciduous",
+            origin: "introduced",
+            description: "Living fossil - unchanged for 200 million years. Unique fan-shaped leaves. Male trees preferred (females have smelly fruit).",
+            leaves: "Fan-shaped with central notch, 2-3 inches. Parallel veins. Unique among trees.",
+            bark: "Gray-brown, becomes deeply furrowed with age.",
+            flowers: "Male catkins, female on separate trees.",
+            fruit: "Females produce foul-smelling tan fruit with edible nut inside.",
+            size: "50-80 ft tall, variable form",
+            habitat: "Urban plantings. Very pollution and pest tolerant.",
+            fall_color: "Brilliant golden yellow, drops all at once.",
+            lookalikes: "None - fan-shaped leaves are unique",
+            spring_tip: "Fan-shaped leaves emerge from short spurs",
+            summer_tip: "Unique fan-shaped leaves with parallel veins",
+            fall_tip: "Spectacular golden yellow, leaves drop simultaneously",
+            winter_tip: "Short spur branches, deeply furrowed bark on old trees",
+            uses: "Ornamental (plant male trees), medicinal",
+            ecology: "Ancient species, very few natural pests",
+            images: {
+                main: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Ginkgo_biloba_leaves.jpg/640px-Ginkgo_biloba_leaves.jpg",
+                leaf: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Ginkgo_biloba_leaves.jpg/320px-Ginkgo_biloba_leaves.jpg",
+                bark: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Ginkgo_biloba_bark.jpg/320px-Ginkgo_biloba_bark.jpg",
+                tree: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Ginkgo_biloba_tree.jpg/320px-Ginkgo_biloba_tree.jpg",
+                fruit: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Ginkgo_biloba_fruit.jpg/320px-Ginkgo_biloba_fruit.jpg",
+                credit: "Wikimedia Commons"
+            }
+        }
+    ];
+
+    let currentView = 'browse';
+    let expandedCard = null;
+    let learnedTrees = JSON.parse(localStorage.getItem('learnedTrees') || '[]');
+    let quizState = { questions: [], current: 0, score: 0 };
+    let idKeyState = { step: 0, answers: {} };
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        renderTrees();
+        updateProgress();
+        document.getElementById('total-count').textContent = trees.length;
+    });
+
+    function setView(view) {
+        currentView = view;
+        document.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-' + view).classList.add('active');
+
+        document.getElementById('view-browse').style.display = view === 'browse' ? 'block' : 'none';
+        document.getElementById('view-seasonal').style.display = view === 'seasonal' ? 'block' : 'none';
+        document.getElementById('view-phylogeny').style.display = view === 'phylogeny' ? 'block' : 'none';
+        document.getElementById('view-compare').style.display = view === 'compare' ? 'block' : 'none';
+        document.getElementById('view-identify').style.display = view === 'identify' ? 'block' : 'none';
+        document.getElementById('view-practice').style.display = view === 'practice' ? 'block' : 'none';
+        document.getElementById('view-quiz').style.display = view === 'quiz' ? 'block' : 'none';
+
+        if (view === 'identify') {
+            initIdentificationKey();
+        }
+        if (view === 'phylogeny') {
+            renderPhylogeny();
+        }
+        if (view === 'compare') {
+            renderCompare();
+        }
+        if (view === 'seasonal') {
+            renderSeasonal();
+        }
+    }
+
+    function filterTrees() {
+        const type = document.getElementById('filter-type').value;
+        const origin = document.getElementById('filter-origin').value;
+        const search = document.getElementById('search').value.toLowerCase();
+        const sortBy = document.getElementById('sort-by').value;
+
+        let filtered = trees.filter(tree => {
+            if (type !== 'all' && tree.type !== type) return false;
+            if (origin !== 'all' && tree.origin !== origin) return false;
+            if (search && !tree.name.toLowerCase().includes(search) &&
+                !tree.scientific.toLowerCase().includes(search) &&
+                !tree.family.toLowerCase().includes(search)) return false;
+            return true;
+        });
+
+        // Sort the filtered results
+        filtered = [...filtered].sort((a, b) => {
+            switch(sortBy) {
+                case 'commonality':
+                    return getCommonality(b.id) - getCommonality(a.id); // Most common first
+                case 'name':
+                    return a.name.localeCompare(b.name);
+                case 'family':
+                    return a.family.localeCompare(b.family) || a.name.localeCompare(b.name);
+                case 'learned':
+                    const aLearned = learnedTrees.includes(a.id) ? 1 : 0;
+                    const bLearned = learnedTrees.includes(b.id) ? 1 : 0;
+                    return aLearned - bLearned; // Not learned first
+                default:
+                    return 0;
+            }
+        });
+
+        renderTrees(filtered);
+    }
+
+    function renderTrees(treeList = trees) {
+        const grid = document.getElementById('tree-grid');
+        grid.innerHTML = treeList.map(tree => createTreeCard(tree)).join('');
+    }
+
+    function createTreeCard(tree) {
+        const isLearned = learnedTrees.includes(tree.id);
+        const isExpanded = expandedCard === tree.id;
+
+        return `
+            <div class="tree-card ${isExpanded ? 'expanded' : ''}" data-tree-id="${tree.id}" onclick="toggleCard(${tree.id})">
+                <div class="tree-card-image">
+                    <img src="${getTreeImage(tree.id, 'leaf')}" alt="${tree.name}" loading="lazy" onload="handleImageLoad(this)" onerror="handleImageError(this)">
+                    <span class="img-credit">VT Dendrology</span>
+                </div>
+                <div class="tree-card-header">
+                    <h3>${tree.name} ${isLearned ? '<span style="color: #28a745;">&#10003;</span>' : ''}</h3>
+                    <div class="scientific-name">${tree.scientific}</div>
+                </div>
+                <div class="tree-card-body">
+                    <p>${tree.description}</p>
+                    <div class="tree-tags">
+                        <span class="tree-tag ${tree.origin}">${tree.origin}</span>
+                        <span class="tree-tag ${tree.type}">${tree.type}</span>
+                        <span class="tree-tag">${tree.family}</span>
+                        ${renderCommonalityBadge(tree.id)}
+                    </div>
+                </div>
+                <div class="tree-details">
+                    <div class="detail-section">
+                        <h4>Photo Gallery</h4>
+                        <div class="image-gallery">
+                            <div class="image-gallery-item" onclick="event.stopPropagation(); openLightbox(${tree.id}, 'leaf')">
+                                <img src="${getTreeImage(tree.id, 'leaf')}" alt="${tree.name} leaf" loading="lazy" onload="handleImageLoad(this)" onerror="handleImageError(this)">
+                                <span class="img-label">Leaf</span>
+                            </div>
+                            <div class="image-gallery-item" onclick="event.stopPropagation(); openLightbox(${tree.id}, 'bark')">
+                                <img src="${getTreeImage(tree.id, 'bark')}" alt="${tree.name} bark" loading="lazy" onload="handleImageLoad(this)" onerror="handleImageError(this)">
+                                <span class="img-label">Bark</span>
+                            </div>
+                            <div class="image-gallery-item" onclick="event.stopPropagation(); openLightbox(${tree.id}, 'tree')">
+                                <img src="${getTreeImage(tree.id, 'tree')}" alt="${tree.name} full tree" loading="lazy" onload="handleImageLoad(this)" onerror="handleImageError(this)">
+                                <span class="img-label">Tree</span>
+                            </div>
+                            <div class="image-gallery-item" onclick="event.stopPropagation(); openLightbox(${tree.id}, 'fruit')">
+                                <img src="${getTreeImage(tree.id, 'fruit')}" alt="${tree.name} fruit/cone" loading="lazy" onload="handleImageLoad(this)" onerror="handleImageError(this)">
+                                <span class="img-label">Fruit/Cone</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <h4>Identification Features</h4>
+                        <div class="detail-grid">
+                            <div class="id-feature"><strong>Leaves</strong>${tree.leaves}</div>
+                            <div class="id-feature"><strong>Bark</strong>${tree.bark}</div>
+                            <div class="id-feature"><strong>Flowers</strong>${tree.flowers}</div>
+                            <div class="id-feature"><strong>Fruit/Seeds</strong>${tree.fruit}</div>
+                            <div class="id-feature"><strong>Size</strong>${tree.size}</div>
+                            <div class="id-feature"><strong>Habitat</strong>${tree.habitat}</div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <h4>Seasonal Identification Tips</h4>
+                        <div class="seasonal-tips">
+                            <div class="season spring"><strong>Spring</strong>${tree.spring_tip}</div>
+                            <div class="season summer"><strong>Summer</strong>${tree.summer_tip}</div>
+                            <div class="season fall"><strong>Fall</strong>${tree.fall_tip}</div>
+                            <div class="season winter"><strong>Winter</strong>${tree.winter_tip}</div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <h4>Similar Species</h4>
+                        <p>${tree.lookalikes}</p>
+                    </div>
+                    <div class="detail-section">
+                        <h4>Uses & Ecology</h4>
+                        <div class="detail-grid">
+                            <div class="id-feature"><strong>Human Uses</strong>${tree.uses}</div>
+                            <div class="id-feature"><strong>Ecological Role</strong>${tree.ecology}</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem; text-align: center; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                        <button class="quiz-btn" onclick="event.stopPropagation(); toggleLearned(${tree.id})">
+                            ${isLearned ? 'Mark as Not Learned' : 'Mark as Learned'}
+                        </button>
+                        <button class="quiz-btn" style="background: #e9ecef; color: #333;" onclick="event.stopPropagation(); shareTree(${tree.id})">
+                            Share Link
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function toggleCard(id) {
+        expandedCard = expandedCard === id ? null : id;
+        renderTrees(getFilteredTrees());
+    }
+
+    function getFilteredTrees() {
+        const type = document.getElementById('filter-type').value;
+        const origin = document.getElementById('filter-origin').value;
+        const search = document.getElementById('search').value.toLowerCase();
+
+        return trees.filter(tree => {
+            if (type !== 'all' && tree.type !== type) return false;
+            if (origin !== 'all' && tree.origin !== origin) return false;
+            if (search && !tree.name.toLowerCase().includes(search) &&
+                !tree.scientific.toLowerCase().includes(search) &&
+                !tree.family.toLowerCase().includes(search)) return false;
+            return true;
+        });
+    }
+
+    function toggleLearned(id) {
+        if (learnedTrees.includes(id)) {
+            learnedTrees = learnedTrees.filter(t => t !== id);
+        } else {
+            learnedTrees.push(id);
+        }
+        localStorage.setItem('learnedTrees', JSON.stringify(learnedTrees));
+        updateProgress();
+        renderTrees(getFilteredTrees());
+    }
+
+    function updateProgress() {
+        const count = learnedTrees.length;
+        const total = trees.length;
+        const percent = Math.round((count / total) * 100);
+
+        document.getElementById('learned-count').textContent = count;
+        document.getElementById('progress-fill').style.width = percent + '%';
+        document.getElementById('progress-percent').textContent = percent + '%';
+    }
+
+    // Identification Key
+    const idKeySteps = [
+        {
+            question: "What type of leaves does the tree have?",
+            choices: [
+                { label: "Needles or scales (evergreen)", value: "evergreen" },
+                { label: "Broad flat leaves", value: "broadleaf" }
+            ]
+        },
+        {
+            question: "How are the leaves/branches arranged?",
+            showIf: { step: 0, value: "broadleaf" },
+            choices: [
+                { label: "Opposite (pairs across from each other)", value: "opposite" },
+                { label: "Alternate (staggered along branch)", value: "alternate" }
+            ]
+        },
+        {
+            question: "What type of needles?",
+            showIf: { step: 0, value: "evergreen" },
+            choices: [
+                { label: "Needles in bundles", value: "bundled" },
+                { label: "Single needles", value: "single" }
+            ]
+        },
+        {
+            question: "Are the leaves simple or compound?",
+            showIf: { step: 1, value: "opposite" },
+            choices: [
+                { label: "Simple (one blade per stem)", value: "simple" },
+                { label: "Compound (multiple leaflets)", value: "compound" }
+            ]
+        },
+        {
+            question: "Are the leaves simple or compound?",
+            showIf: { step: 1, value: "alternate" },
+            choices: [
+                { label: "Simple (one blade per stem)", value: "alt-simple" },
+                { label: "Compound (multiple leaflets)", value: "alt-compound" }
+            ]
+        }
+    ];
+
+    function initIdentificationKey() {
+        idKeyState = { step: 0, answers: {} };
+        renderIdKey();
+    }
+
+    function renderIdKey() {
+        const container = document.getElementById('id-key');
+        let html = '';
+
+        idKeySteps.forEach((step, index) => {
+            // Check if this step should be shown
+            if (step.showIf) {
+                const prereq = idKeyState.answers[step.showIf.step];
+                if (prereq !== step.showIf.value) return;
+            }
+
+            const isActive = Object.keys(idKeyState.answers).length === getStepIndex(index);
+            const answered = idKeyState.answers[index] !== undefined;
+
+            html += `
+                <div class="id-step ${isActive ? 'active' : ''}">
+                    <h4>Step ${getStepIndex(index) + 1}: ${step.question}</h4>
+                    <div class="id-choices">
+                        ${step.choices.map(choice => `
+                            <div class="id-choice ${idKeyState.answers[index] === choice.value ? 'selected' : ''}"
+                                 onclick="selectIdChoice(${index}, '${choice.value}')">
+                                ${choice.label}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+
+        // Show results if enough answers
+        showIdResults();
+    }
+
+    function getStepIndex(absoluteIndex) {
+        let count = 0;
+        for (let i = 0; i < absoluteIndex; i++) {
+            const step = idKeySteps[i];
+            if (!step.showIf) {
+                count++;
+            } else if (idKeyState.answers[step.showIf.step] === step.showIf.value) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    function selectIdChoice(stepIndex, value) {
+        idKeyState.answers[stepIndex] = value;
+        // Clear subsequent answers
+        Object.keys(idKeyState.answers).forEach(key => {
+            if (parseInt(key) > stepIndex) {
+                delete idKeyState.answers[key];
+            }
+        });
+        renderIdKey();
+    }
+
+    function showIdResults() {
+        const resultsDiv = document.getElementById('id-results');
+        const matchesDiv = document.getElementById('id-matches');
+
+        const answers = idKeyState.answers;
+        let matches = [...trees];
+
+        // Filter based on answers
+        if (answers[0] === 'evergreen') {
+            matches = matches.filter(t => t.type === 'evergreen');
+        } else if (answers[0] === 'broadleaf') {
+            matches = matches.filter(t => t.type === 'deciduous');
+        }
+
+        // Opposite vs alternate
+        if (answers[1] === 'opposite') {
+            matches = matches.filter(t =>
+                t.family === 'Sapindaceae' || // Maples
+                t.family === 'Oleaceae' || // Ashes
+                t.family === 'Cornaceae' // Dogwoods
+            );
+        } else if (answers[1] === 'alternate') {
+            matches = matches.filter(t =>
+                t.family !== 'Sapindaceae' &&
+                t.family !== 'Oleaceae' &&
+                t.family !== 'Cornaceae' &&
+                t.type === 'deciduous'
+            );
+        }
+
+        // Needles
+        if (answers[2] === 'bundled') {
+            matches = matches.filter(t => t.name.includes('Pine'));
+        } else if (answers[2] === 'single') {
+            matches = matches.filter(t =>
+                t.name.includes('Spruce') ||
+                t.name.includes('Hemlock')
+            );
+        }
+
+        // Compound leaves
+        if (answers[3] === 'compound' || answers[4] === 'alt-compound') {
+            matches = matches.filter(t =>
+                t.leaves.toLowerCase().includes('compound') ||
+                t.leaves.toLowerCase().includes('leaflet')
+            );
+        } else if (answers[3] === 'simple' || answers[4] === 'alt-simple') {
+            matches = matches.filter(t =>
+                !t.leaves.toLowerCase().includes('compound') &&
+                !t.leaves.toLowerCase().includes('leaflet')
+            );
+        }
+
+        // Update match count display
+        const countEl = document.getElementById('id-match-count');
+        if (Object.keys(answers).length > 0) {
+            countEl.textContent = `${matches.length} possible match${matches.length !== 1 ? 'es' : ''}`;
+            countEl.style.background = matches.length <= 5 ? '#d4edda' : matches.length <= 10 ? '#fff3cd' : '#f8d7da';
+        } else {
+            countEl.textContent = `${trees.length} trees`;
+            countEl.style.background = '#e9ecef';
+        }
+
+        if (Object.keys(answers).length > 0 && matches.length > 0 && matches.length <= 15) {
+            resultsDiv.style.display = 'block';
+            matchesDiv.innerHTML = matches.map(tree => createTreeCard(tree)).join('');
+        } else {
+            resultsDiv.style.display = 'none';
+        }
+    }
+
+    // Quiz Functions
+    function startQuiz(forceNew = false) {
+        if (!forceNew && loadQuizProgress()) {
+            renderQuizQuestion();
+            return;
+        }
+        const quizQuestions = generateQuizQuestions(10);
+        quizState = { questions: quizQuestions, current: 0, score: 0 };
+        localStorage.removeItem('quizState');
+        renderQuizQuestion();
+    }
+
+    // Weighted random selection - prioritizes common trees
+    function getWeightedRandomTree(treeList = trees) {
+        // Weight by commonality: rating^2 gives strong preference to common trees
+        const weights = treeList.map(t => Math.pow(getCommonality(t.id), 2));
+        const totalWeight = weights.reduce((a, b) => a + b, 0);
+        let random = Math.random() * totalWeight;
+
+        for (let i = 0; i < treeList.length; i++) {
+            random -= weights[i];
+            if (random <= 0) return treeList[i];
+        }
+        return treeList[treeList.length - 1];
+    }
+
+    function generateQuizQuestions(count) {
+        const questions = [];
+        const questionTypes = [
+            'leaf', 'bark', 'family', 'origin', 'fruit', 'fall_color'
+        ];
+
+        for (let i = 0; i < count; i++) {
+            const type = questionTypes[Math.floor(Math.random() * questionTypes.length)];
+            let correctTree = getWeightedRandomTree(); // Prioritize common trees
+
+            let question, correctAnswer, options;
+
+            // For fall_color questions, only use deciduous trees
+            if (type === 'fall_color' && correctTree.type === 'evergreen') {
+                const deciduousTrees = trees.filter(t => t.type === 'deciduous');
+                correctTree = getWeightedRandomTree(deciduousTrees);
+            }
+
+            switch(type) {
+                case 'leaf':
+                    question = `Which tree has these leaves: "${correctTree.leaves.substring(0, 80)}..."?`;
+                    correctAnswer = correctTree.name;
+                    break;
+                case 'bark':
+                    question = `Which tree has this bark: "${correctTree.bark}"?`;
+                    correctAnswer = correctTree.name;
+                    break;
+                case 'family':
+                    question = `What family does ${correctTree.name} belong to?`;
+                    correctAnswer = correctTree.family;
+                    break;
+                case 'origin':
+                    question = `Is ${correctTree.name} native or introduced to the Troy area?`;
+                    correctAnswer = correctTree.origin === 'native' ? 'Native' : 'Introduced';
+                    break;
+                case 'fruit':
+                    question = `Which tree produces: "${correctTree.fruit}"?`;
+                    correctAnswer = correctTree.name;
+                    break;
+                case 'fall_color':
+                    question = `Which tree has this fall color: "${correctTree.fall_color}"?`;
+                    correctAnswer = correctTree.name;
+                    break;
+            }
+
+            // Generate wrong answers
+            if (type === 'family') {
+                const families = [...new Set(trees.map(t => t.family))];
+                options = [correctAnswer];
+                while (options.length < 4) {
+                    const fam = families[Math.floor(Math.random() * families.length)];
+                    if (!options.includes(fam)) options.push(fam);
+                }
+            } else if (type === 'origin') {
+                options = ['Native', 'Introduced'];
+            } else if (type === 'fall_color') {
+                // Only use deciduous trees as wrong answers for fall color
+                const deciduousTrees = trees.filter(t => t.type === 'deciduous');
+                options = [correctAnswer];
+                while (options.length < 4) {
+                    const tree = deciduousTrees[Math.floor(Math.random() * deciduousTrees.length)];
+                    if (!options.includes(tree.name)) options.push(tree.name);
+                }
+            } else {
+                options = [correctAnswer];
+                while (options.length < 4) {
+                    const tree = trees[Math.floor(Math.random() * trees.length)];
+                    if (!options.includes(tree.name)) options.push(tree.name);
+                }
+            }
+
+            // Shuffle options
+            options = options.sort(() => Math.random() - 0.5);
+
+            questions.push({ question, correctAnswer, options });
+        }
+
+        return questions;
+    }
+
+    function renderQuizQuestion() {
+        const container = document.getElementById('quiz-content');
+        const q = quizState.questions[quizState.current];
+
+        if (!q) {
+            // Quiz complete
+            const percent = Math.round((quizState.score / quizState.questions.length) * 100);
+            localStorage.removeItem('quizState');
+            container.innerHTML = `
+                <h2 class="nocount">Quiz Complete!</h2>
+                <p class="quiz-score">You scored ${quizState.score} out of ${quizState.questions.length} (${percent}%)</p>
+                <button class="quiz-btn" onclick="startQuiz(true)">Try Again</button>
+            `;
+            return;
+        }
+
+        container.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <p style="color: #666; margin: 0;">Question ${quizState.current + 1} of ${quizState.questions.length}</p>
+                <button class="quiz-btn" style="padding: 6px 12px; font-size: 12px;" onclick="startQuiz(true)">New Quiz</button>
+            </div>
+            <p class="quiz-question">${q.question}</p>
+            <div class="quiz-options">
+                ${q.options.map((opt, i) => `
+                    <div class="quiz-option" onclick="answerQuiz('${opt.replace(/'/g, "\\'")}')">
+                        <span style="opacity: 0.5; margin-right: 8px;">${i + 1}.</span>${opt}
+                    </div>
+                `).join('')}
+            </div>
+            <p class="quiz-score">Score: ${quizState.score}</p>
+            <p style="color: #999; font-size: 0.85rem; text-align: center;">Tip: Press 1-4 on keyboard to answer</p>
+        `;
+    }
+
+    function answerQuiz(answer) {
+        const q = quizState.questions[quizState.current];
+        const options = document.querySelectorAll('.quiz-option');
+
+        options.forEach(opt => {
+            if (opt.textContent === q.correctAnswer) {
+                opt.classList.add('correct');
+            } else if (opt.textContent === answer && answer !== q.correctAnswer) {
+                opt.classList.add('incorrect');
+            }
+            opt.style.pointerEvents = 'none';
+        });
+
+        if (answer === q.correctAnswer) {
+            quizState.score++;
+        }
+
+        setTimeout(() => {
+            quizState.current++;
+            saveQuizProgress();
+            renderQuizQuestion();
+        }, 1500);
+    }
+
+    // Practice Mode - Identify trees from leaf images using the dichotomous key
+    let practiceState = {
+        targetTree: null,
+        answers: {},
+        completed: false,
+        score: 0,
+        total: 0
+    };
+
+    function startPractice() {
+        // Select a random tree - weighted toward common trees
+        practiceState.targetTree = getWeightedRandomTree();
+        practiceState.answers = {};
+        practiceState.completed = false;
+        renderPractice();
+    }
+
+    function renderPractice() {
+        const container = document.getElementById('practice-content');
+        const tree = practiceState.targetTree;
+
+        if (practiceState.completed) {
+            renderPracticeResult();
+            return;
+        }
+
+        // Get the leaf image
+        const leafImg = getTreeImage(tree.id, 'leaf');
+
+        // Build the dichotomous key HTML
+        let keyHtml = '';
+        idKeySteps.forEach((step, index) => {
+            // Check if this step should be shown based on previous answers
+            if (step.showIf) {
+                const prereq = practiceState.answers[step.showIf.step];
+                if (prereq !== step.showIf.value) return;
+            }
+
+            const isActive = Object.keys(practiceState.answers).length === getPracticeStepIndex(index);
+            const answered = practiceState.answers[index] !== undefined;
+
+            keyHtml += `
+                <div class="id-step ${isActive ? 'active' : ''}">
+                    <h4>Step ${getPracticeStepIndex(index) + 1}: ${step.question}</h4>
+                    <div class="id-choices">
+                        ${step.choices.map(choice => `
+                            <div class="id-choice ${practiceState.answers[index] === choice.value ? 'selected' : ''}"
+                                 onclick="selectPracticeChoice(${index}, '${choice.value}')">
+                                ${choice.label}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        });
+
+        // Get matching trees based on current answers
+        const matches = getPracticeMatches();
+        let matchesHtml = '';
+        if (Object.keys(practiceState.answers).length >= 2) {
+            matchesHtml = `
+                <div class="practice-matches">
+                    <h3 class="nocount">Possible Matches (${matches.length})</h3>
+                    <p>Based on your answers, select the tree you think this is:</p>
+                    <div class="quiz-options" style="flex-wrap: wrap;">
+                        ${matches.map(t => `
+                            <div class="quiz-option" onclick="submitPracticeAnswer(${t.id})">${t.name}</div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        container.innerHTML = `
+            <div class="practice-session">
+                <div class="practice-header">
+                    <span style="color: #666;">Identify this tree using the dichotomous key</span>
+                    <button class="quiz-btn" style="padding: 8px 16px; font-size: 14px;" onclick="startPractice()">New Tree</button>
+                </div>
+                <div class="practice-image">
+                    <img src="${leafImg}" alt="Mystery tree leaf" style="max-width: 100%; max-height: 300px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                    <p style="color: #666; margin-top: 8px;">Examine the leaf and answer the questions below</p>
+                </div>
+                <div class="id-key">
+                    ${keyHtml}
+                </div>
+                ${matchesHtml}
+            </div>
+        `;
+    }
+
+    function getPracticeStepIndex(absoluteIndex) {
+        let count = 0;
+        for (let i = 0; i < absoluteIndex; i++) {
+            const step = idKeySteps[i];
+            if (!step.showIf) {
+                count++;
+            } else if (practiceState.answers[step.showIf.step] === step.showIf.value) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    function selectPracticeChoice(stepIndex, value) {
+        practiceState.answers[stepIndex] = value;
+        // Clear subsequent answers
+        Object.keys(practiceState.answers).forEach(key => {
+            if (parseInt(key) > stepIndex) {
+                delete practiceState.answers[key];
+            }
+        });
+        renderPractice();
+    }
+
+    function getPracticeMatches() {
+        const answers = practiceState.answers;
+        let matches = [...trees];
+
+        // Filter based on answers (same logic as identification key)
+        if (answers[0] === 'evergreen') {
+            matches = matches.filter(t => t.type === 'evergreen');
+        } else if (answers[0] === 'broadleaf') {
+            matches = matches.filter(t => t.type === 'deciduous');
+        }
+
+        if (answers[1] === 'opposite') {
+            matches = matches.filter(t =>
+                t.family === 'Sapindaceae' || t.family === 'Oleaceae' || t.family === 'Cornaceae'
+            );
+        } else if (answers[1] === 'alternate') {
+            matches = matches.filter(t =>
+                t.family !== 'Sapindaceae' && t.family !== 'Oleaceae' && t.family !== 'Cornaceae' && t.type === 'deciduous'
+            );
+        }
+
+        if (answers[2] === 'bundled') {
+            matches = matches.filter(t => t.name.includes('Pine'));
+        } else if (answers[2] === 'single') {
+            matches = matches.filter(t => t.type === 'evergreen' && !t.name.includes('Pine'));
+        }
+
+        if (answers[3] === 'simple') {
+            matches = matches.filter(t => t.family === 'Sapindaceae' || t.family === 'Cornaceae');
+        } else if (answers[3] === 'compound') {
+            matches = matches.filter(t => t.family === 'Oleaceae');
+        }
+
+        return matches;
+    }
+
+    function submitPracticeAnswer(treeId) {
+        practiceState.completed = true;
+        practiceState.selectedId = treeId;
+        practiceState.total++;
+        if (treeId === practiceState.targetTree.id) {
+            practiceState.score++;
+        }
+        renderPracticeResult();
+    }
+
+    function renderPracticeResult() {
+        const container = document.getElementById('practice-content');
+        const target = practiceState.targetTree;
+        const correct = practiceState.selectedId === target.id;
+        const selected = trees.find(t => t.id === practiceState.selectedId);
+
+        const leafImg = getTreeImage(target.id, 'leaf');
+        const barkImg = getTreeImage(target.id, 'bark');
+
+        container.innerHTML = `
+            <div class="practice-result ${correct ? 'correct' : 'incorrect'}">
+                <h2 class="nocount">${correct ? 'Correct!' : 'Not quite...'}</h2>
+                ${!correct ? `<p>You selected: <strong>${selected ? selected.name : 'Unknown'}</strong></p>` : ''}
+                <p>This is: <strong>${target.name}</strong> (<em>${target.scientific}</em>)</p>
+                <div style="display: flex; gap: 16px; justify-content: center; margin: 16px 0; flex-wrap: wrap;">
+                    <div>
+                        <img src="${leafImg}" alt="${target.name} leaf" style="max-height: 150px; border-radius: 8px;">
+                        <p style="font-size: 12px; color: #666;">Leaf</p>
+                    </div>
+                    <div>
+                        <img src="${barkImg}" alt="${target.name} bark" style="max-height: 150px; border-radius: 8px;">
+                        <p style="font-size: 12px; color: #666;">Bark</p>
+                    </div>
+                </div>
+                <div style="background: #f5f5f5; padding: 16px; border-radius: 8px; text-align: left; margin: 16px 0;">
+                    <p><strong>Key features:</strong></p>
+                    <p><strong>Leaves:</strong> ${target.leaves}</p>
+                    <p><strong>Bark:</strong> ${target.bark}</p>
+                </div>
+                <p style="color: #666;">Session: ${practiceState.score} / ${practiceState.total} correct</p>
+                <button class="quiz-btn" onclick="startPractice()">Practice Another</button>
+            </div>
+        `;
+    }
+
+    // Local image database - downloaded from Virginia Tech Dendrology
+    // Images used for personal educational purposes with attribution
+    // Source: Virginia Tech Department of Forest Resources and Environmental Conservation
+    // https://dendro.cnre.vt.edu/dendrology/
+    const localImages = {
+        1: "Acer_saccharum",      // Sugar Maple
+        2: "Acer_rubrum",         // Red Maple
+        3: "Acer_platanoides",    // Norway Maple
+        4: "Acer_saccharinum",    // Silver Maple
+        5: "Quercus_rubra",       // Red Oak
+        6: "Quercus_alba",        // White Oak
+        7: "Quercus_palustris",   // Pin Oak
+        8: "Pinus_strobus",       // Eastern White Pine
+        9: "Picea_abies",         // Norway Spruce
+        10: "Picea_pungens",      // Colorado Blue Spruce
+        11: "Fagus_grandifolia",  // American Beech
+        12: "Betula_papyrifera",  // Paper Birch
+        13: "Betula_nigra",       // River Birch
+        14: "Juglans_nigra",      // Black Walnut
+        15: "Carya_ovata",        // Shagbark Hickory
+        16: "Prunus_serotina",    // Black Cherry
+        17: "Tsuga_canadensis",   // Eastern Hemlock
+        18: "Ulmus_americana",    // American Elm
+        19: "Fraxinus_americana", // White Ash
+        20: "Populus_deltoides",  // Eastern Cottonwood
+        21: "Picea_glauca",       // White Spruce
+        22: "Liriodendron_tulipifera", // Tulip Tree
+        23: "Cornus_florida",     // Flowering Dogwood
+        24: "Gleditsia_triacanthos", // Honey Locust
+        25: "Robinia_pseudoacacia", // Black Locust
+        26: "Sassafras_albidum",  // Sassafras
+        27: "Platanus_occidentalis", // American Sycamore
+        28: "Platanus_x_acerifolia", // London Planetree (no local images)
+        29: "Quercus_rubra",      // Northern Red Oak (duplicate entry)
+        30: "Ginkgo_biloba"       // Ginkgo
+    };
+
+    // Build verifiedImages from local paths
+    const verifiedImages = {};
+    for (const [id, folder] of Object.entries(localImages)) {
+        verifiedImages[id] = {
+            leaf: `images/${folder}/leaf.jpg`,
+            bark: `images/${folder}/bark.jpg`,
+            tree: `images/${folder}/tree.jpg`,
+            fruit: `images/${folder}/fruit.jpg`
+        };
+    }
+
+    // Tree commonality in Troy/Capital District (5=very common, 1=rare)
+    const treeCommonality = {
+        1: { rating: 5, label: "Very Common", desc: "Abundant throughout Troy - streets, parks, yards" },      // Sugar Maple
+        2: { rating: 5, label: "Very Common", desc: "Extremely adaptable - found everywhere" },                // Red Maple
+        3: { rating: 5, label: "Very Common", desc: "Dominant street tree, often invasive" },                  // Norway Maple
+        4: { rating: 4, label: "Common", desc: "Common near water and in older neighborhoods" },               // Silver Maple
+        5: { rating: 5, label: "Very Common", desc: "Common native oak in forests and parks" },                // Red Oak
+        6: { rating: 4, label: "Common", desc: "Found in parks and mature forests" },                          // White Oak
+        7: { rating: 5, label: "Very Common", desc: "Popular street and park tree" },                          // Pin Oak
+        8: { rating: 5, label: "Very Common", desc: "Common in yards and parks" },                             // Eastern White Pine
+        9: { rating: 4, label: "Common", desc: "Popular landscaping evergreen" },                              // Norway Spruce
+        10: { rating: 3, label: "Occasional", desc: "Ornamental, less common than Norway Spruce" },            // Blue Spruce
+        11: { rating: 2, label: "Uncommon", desc: "Less common landscaping choice" },                          // White Spruce
+        12: { rating: 4, label: "Common", desc: "Common in parks and forests" },                               // American Beech
+        13: { rating: 3, label: "Occasional", desc: "Ornamental in yards and parks" },                         // Paper Birch
+        14: { rating: 3, label: "Occasional", desc: "Ornamental, tolerates wet sites" },                       // River Birch
+        15: { rating: 2, label: "Uncommon", desc: "Scattered in yards, forest edges" },                        // Black Walnut
+        16: { rating: 2, label: "Uncommon", desc: "Found in forests, less common in urban areas" },            // Shagbark Hickory
+        17: { rating: 4, label: "Common", desc: "Common native in forests and edges" },                        // Black Cherry
+        18: { rating: 1, label: "Rare", desc: "Declining due to Hemlock Woolly Adelgid" },                     // Eastern Hemlock
+        19: { rating: 2, label: "Uncommon", desc: "Once common, devastated by Dutch Elm Disease" },            // American Elm
+        20: { rating: 3, label: "Occasional", desc: "Declining due to Emerald Ash Borer" },                    // White Ash
+        21: { rating: 3, label: "Occasional", desc: "Found near rivers and wet areas" },                       // Eastern Cottonwood
+        22: { rating: 3, label: "Occasional", desc: "Large specimen tree in parks" },                          // Tulip Tree
+        23: { rating: 3, label: "Occasional", desc: "Popular ornamental understory tree" },                    // Flowering Dogwood
+        24: { rating: 4, label: "Common", desc: "Popular thornless cultivars as street trees" },               // Honey Locust
+        25: { rating: 2, label: "Uncommon", desc: "Scattered, can be weedy" },                                 // Black Locust
+        26: { rating: 2, label: "Uncommon", desc: "Forest edges and old fields" },                             // Sassafras
+        27: { rating: 3, label: "Occasional", desc: "Parks and along waterways" },                             // American Sycamore
+        28: { rating: 4, label: "Common", desc: "Popular urban street tree" },                                 // Ginkgo
+        29: { rating: 5, label: "Very Common", desc: "Common native oak" },                                    // Red Oak (dup)
+        30: { rating: 4, label: "Common", desc: "Popular urban street tree" }                                  // Ginkgo (dup)
+    };
+
+    // Confusion pairs - species often mistaken for each other
+    const confusionPairs = [
+        {
+            species: [1, 3], // Sugar Maple vs Norway Maple
+            title: "Sugar Maple vs Norway Maple",
+            difficulty: "Common confusion",
+            keyDifferences: [
+                { feature: "Sap", left: "Clear, watery sap", right: "Milky white sap when leaf stem broken" },
+                { feature: "Leaf margins", left: "Smooth between lobes (no teeth)", right: "May have sparse teeth" },
+                { feature: "Samara angle", left: "U-shaped (60-90°)", right: "Nearly flat (180°)" },
+                { feature: "Fall color", left: "Brilliant orange/red/yellow", right: "Dull yellow, late to turn" },
+                { feature: "Origin", left: "Native", right: "Introduced (invasive)" }
+            ]
+        },
+        {
+            species: [1, 2], // Sugar Maple vs Red Maple
+            title: "Sugar Maple vs Red Maple",
+            difficulty: "Moderate",
+            keyDifferences: [
+                { feature: "Leaf margins", left: "Smooth between lobes", right: "Serrated/toothed between lobes" },
+                { feature: "Leaf stem", left: "Green petiole", right: "Red petiole" },
+                { feature: "Twigs", left: "Brown twigs", right: "Red twigs" },
+                { feature: "Samara timing", left: "Fall", right: "Spring (much earlier)" },
+                { feature: "Habitat", left: "Prefers rich, well-drained soil", right: "Tolerates wet or dry" }
+            ]
+        },
+        {
+            species: [2, 4], // Red Maple vs Silver Maple
+            title: "Red Maple vs Silver Maple",
+            difficulty: "Moderate",
+            keyDifferences: [
+                { feature: "Leaf lobes", left: "3-5 lobes, moderate cuts", right: "5 lobes, DEEPLY cut (almost to center)" },
+                { feature: "Leaf underside", left: "Light green, slightly pale", right: "Silvery white underside" },
+                { feature: "Growth rate", left: "Moderate", right: "Very fast (weak wood)" },
+                { feature: "Fall color", left: "Brilliant red", right: "Yellow or pale, unimpressive" }
+            ]
+        },
+        {
+            species: [5, 7], // Red Oak vs Pin Oak
+            title: "Red Oak vs Pin Oak",
+            difficulty: "Moderate",
+            keyDifferences: [
+                { feature: "Lower branches", left: "Horizontal or ascending", right: "Distinctly DROOPING downward" },
+                { feature: "Leaf sinuses", left: "Shallow to moderate cuts", right: "Very deep cuts (almost to midrib)" },
+                { feature: "Acorn cap", left: "Covers 1/4 of acorn, flat saucer", right: "Covers 1/3, thin and tight" },
+                { feature: "Typical habitat", left: "Upland forests", right: "Bottomlands, tolerates wet soil" }
+            ]
+        },
+        {
+            species: [5, 6], // Red Oak vs White Oak
+            title: "Red Oak vs White Oak",
+            difficulty: "Easy",
+            keyDifferences: [
+                { feature: "Leaf lobe tips", left: "POINTED with bristle tips", right: "ROUNDED, no bristles" },
+                { feature: "Bark color", left: "Dark gray to black", right: "Light gray, almost white" },
+                { feature: "Acorn taste", left: "Very bitter (high tannin)", right: "Mild, edible after prep" },
+                { feature: "Leaf fall", left: "Leaves fall in autumn", right: "Leaves may persist into winter" }
+            ]
+        },
+        {
+            species: [8, 18], // Eastern White Pine vs Eastern Hemlock
+            title: "White Pine vs Eastern Hemlock",
+            difficulty: "Easy",
+            keyDifferences: [
+                { feature: "Needle arrangement", left: "Bundles of 5 needles", right: "Single needles, short (1/2 inch)" },
+                { feature: "Needle length", left: "Long (3-5 inches)", right: "Very short (1/3-1/2 inch)" },
+                { feature: "Cones", left: "Large (4-8 inches), pendant", right: "Tiny (3/4 inch)" },
+                { feature: "Needle underside", left: "Whitish lines on all sides", right: "Two white stripes beneath" }
+            ]
+        },
+        {
+            species: [9, 10], // Norway Spruce vs Blue Spruce
+            title: "Norway Spruce vs Blue Spruce",
+            difficulty: "Easy",
+            keyDifferences: [
+                { feature: "Needle color", left: "Dark green", right: "Blue-gray to silvery blue" },
+                { feature: "Branch tips", left: "Distinctly DROOPING", right: "Stiff, horizontal" },
+                { feature: "Overall form", left: "Graceful, weeping appearance", right: "Rigid, pyramidal" },
+                { feature: "Origin", left: "European", right: "Western North American" }
+            ]
+        },
+        {
+            species: [13, 14], // Paper Birch vs River Birch
+            title: "Paper Birch vs River Birch",
+            difficulty: "Easy",
+            keyDifferences: [
+                { feature: "Bark color", left: "WHITE, peeling in sheets", right: "Salmon-pink to reddish-brown, peeling" },
+                { feature: "Habitat", left: "Cool, northern sites", right: "Warm, wet bottomlands" },
+                { feature: "Heat tolerance", left: "Poor - struggles in hot summers", right: "Excellent heat tolerance" },
+                { feature: "Bark on young trees", left: "Reddish-brown, becomes white", right: "Salmon-pink from young age" }
+            ]
+        },
+        {
+            species: [24, 25], // Honey Locust vs Black Locust
+            title: "Honey Locust vs Black Locust",
+            difficulty: "Moderate",
+            keyDifferences: [
+                { feature: "Thorns", left: "Large branched thorns (wild) or thornless (cultivars)", right: "Paired short thorns at leaf bases" },
+                { feature: "Leaves", left: "Bipinnately compound (doubly divided)", right: "Pinnately compound (single division)" },
+                { feature: "Flowers", left: "Inconspicuous greenish", right: "Showy white, fragrant clusters" },
+                { feature: "Seed pods", left: "Long twisted pods (12-18 inches)", right: "Short flat pods (2-4 inches)" }
+            ]
+        },
+        {
+            species: [15, 16], // Black Walnut vs Shagbark Hickory
+            title: "Black Walnut vs Shagbark Hickory",
+            difficulty: "Moderate",
+            keyDifferences: [
+                { feature: "Bark", left: "Dark, deeply furrowed", right: "Shaggy plates curling outward" },
+                { feature: "Number of leaflets", left: "15-23 leaflets", right: "5 leaflets (usually)" },
+                { feature: "Terminal leaflet", left: "Often absent or small", right: "Large, prominent" },
+                { feature: "Nut shape", left: "Round, green husk", right: "Oval, husk splits into 4 parts" },
+                { feature: "Smell", left: "Aromatic (spicy) when crushed", right: "No strong scent" }
+            ]
+        }
+    ];
+
+    // Get image URL - uses local images first, falls back to iNaturalist
+    function getTreeImage(treeId, imageType) {
+        // First try local images (downloaded from VT Dendrology)
+        if (verifiedImages[treeId] && verifiedImages[treeId][imageType]) {
+            return verifiedImages[treeId][imageType];
+        }
+
+        // Fallback to tree's embedded iNaturalist images
+        const tree = trees.find(t => t.id === treeId);
+        if (tree && tree.images && tree.images[imageType]) {
+            return tree.images[imageType];
+        }
+
+        // Fallback to main image if specific type not available
+        if (tree && tree.images && tree.images.main) {
+            return tree.images.main;
+        }
+
+        return null;
+    }
+
+    // Lightbox functionality
+    let lightboxState = { treeId: null, imageType: null };
+    const imageTypes = ['leaf', 'bark', 'tree', 'fruit'];
+    const imageLabels = { leaf: 'Leaf', bark: 'Bark', tree: 'Full Tree', fruit: 'Fruit/Cone' };
+
+    function openLightbox(treeId, imageType) {
+        const tree = trees.find(t => t.id === treeId);
+        if (!tree) return;
+
+        lightboxState = { treeId, imageType };
+
+        const imgUrl = getTreeImage(treeId, imageType);
+        if (!imgUrl) return;
+
+        document.getElementById('lightbox-img').src = imgUrl;
+        document.getElementById('lightbox-title').textContent = `${tree.name} - ${imageLabels[imageType]}`;
+        document.getElementById('lightbox-credit').textContent = 'Image: Virginia Tech Dendrology (Educational Use)';
+        document.getElementById('lightbox').classList.add('active');
+
+        // Prevent body scrolling
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function navLightbox(direction) {
+        const tree = trees.find(t => t.id === lightboxState.treeId);
+        if (!tree) return;
+
+        const currentIndex = imageTypes.indexOf(lightboxState.imageType);
+        let newIndex = currentIndex + direction;
+
+        if (newIndex < 0) newIndex = imageTypes.length - 1;
+        if (newIndex >= imageTypes.length) newIndex = 0;
+
+        openLightbox(lightboxState.treeId, imageTypes[newIndex]);
+    }
+
+    // Dark Mode Toggle
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+        document.querySelector('.dark-toggle').textContent = isDark ? 'Light Mode' : 'Dark Mode';
+    }
+
+    // Initialize dark mode from localStorage
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+        document.querySelector('.dark-toggle').textContent = 'Light Mode';
+    }
+
+    // Share Tree Functionality
+    function shareTree(treeId) {
+        const tree = trees.find(t => t.id === treeId);
+        if (!tree) return;
+        const url = `${location.origin}${location.pathname}?tree=${treeId}`;
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(() => {
+                alert(`Link to ${tree.name} copied to clipboard!`);
+            });
+        } else {
+            prompt('Copy this link:', url);
+        }
+    }
+
+    // Check for shared tree on load
+    const urlParams = new URLSearchParams(window.location.search);
+    const sharedTreeId = urlParams.get('tree');
+    if (sharedTreeId) {
+        setTimeout(() => {
+            const card = document.querySelector(`[data-tree-id="${sharedTreeId}"]`);
+            if (card) {
+                card.click();
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 100);
+    }
+
+    // Phylogeny Data - Evolutionary relationships
+    const phylogenyData = {
+        name: "Seed Plants",
+        latin: "Spermatophyta",
+        traits: "Plants that reproduce via seeds",
+        children: [
+            {
+                name: "Gymnosperms",
+                latin: "Gymnospermae",
+                traits: "Naked seeds (not enclosed in fruit), needle or scale leaves, produce cones. Ancient lineage predating flowering plants.",
+                type: "major",
+                children: [
+                    {
+                        name: "Ginkgo",
+                        latin: "Ginkgoaceae",
+                        traits: "Living fossil - only surviving member of its division. Fan-shaped leaves, foul-smelling fruit.",
+                        type: "family",
+                        species: ["ginkgo_biloba"]
+                    },
+                    {
+                        name: "Pine Family",
+                        latin: "Pinaceae",
+                        traits: "Needles in bundles or single, woody cones, resinous sap. Includes pines, spruces, hemlocks, firs.",
+                        type: "family",
+                        children: [
+                            {
+                                name: "Pines",
+                                latin: "Pinus",
+                                traits: "Needles in bundles of 2-5, persistent woody cones.",
+                                type: "genus",
+                                species: ["pinus_strobus"]
+                            },
+                            {
+                                name: "Spruces",
+                                latin: "Picea",
+                                traits: "Single needles on peg-like projections, pendulous cones that fall whole.",
+                                type: "genus",
+                                species: ["picea_abies", "picea_pungens", "picea_glauca"]
+                            },
+                            {
+                                name: "Hemlocks",
+                                latin: "Tsuga",
+                                traits: "Short flat needles with white stripes beneath, small cones.",
+                                type: "genus",
+                                species: ["tsuga_canadensis"]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Angiosperms",
+                latin: "Angiospermae",
+                traits: "Flowering plants with seeds enclosed in fruit. Broad leaves (mostly). The dominant plant group today.",
+                type: "major",
+                children: [
+                    {
+                        name: "Magnoliids",
+                        latin: "Magnoliidae",
+                        traits: "Basal flowering plants - ancient lineage. Often aromatic, simple leaves.",
+                        type: "order",
+                        children: [
+                            {
+                                name: "Magnolia Family",
+                                latin: "Magnoliaceae",
+                                traits: "Large showy flowers, cone-like fruit aggregates, alternate simple leaves.",
+                                type: "family",
+                                species: ["liriodendron_tulipifera"]
+                            },
+                            {
+                                name: "Laurel Family",
+                                latin: "Lauraceae",
+                                traits: "Aromatic leaves and bark, often lobed leaves, small flowers.",
+                                type: "family",
+                                species: ["sassafras_albidum"]
+                            }
+                        ]
+                    },
+                    {
+                        name: "Rosids",
+                        latin: "Rosidae",
+                        traits: "Large eudicot clade. Includes many familiar trees. Mostly alternate leaves.",
+                        type: "order",
+                        children: [
+                            {
+                                name: "Fagales",
+                                latin: "Fagales",
+                                traits: "The 'nut trees' - produce acorns, nuts, or nutlets. Wind-pollinated with catkins.",
+                                type: "order",
+                                children: [
+                                    {
+                                        name: "Beech & Oak Family",
+                                        latin: "Fagaceae",
+                                        traits: "Alternate simple leaves (often lobed in oaks), produce acorns or beechnuts in cups.",
+                                        type: "family",
+                                        species: ["quercus_rubra", "quercus_alba", "quercus_palustris", "fagus_grandifolia"]
+                                    },
+                                    {
+                                        name: "Birch Family",
+                                        latin: "Betulaceae",
+                                        traits: "Alternate simple leaves with doubly-serrate margins, often distinctive peeling bark, catkins.",
+                                        type: "family",
+                                        species: ["betula_papyrifera", "betula_nigra"]
+                                    },
+                                    {
+                                        name: "Walnut Family",
+                                        latin: "Juglandaceae",
+                                        traits: "Alternate COMPOUND leaves (pinnate), aromatic, large edible nuts.",
+                                        type: "family",
+                                        species: ["juglans_nigra", "carya_ovata"]
+                                    }
+                                ]
+                            },
+                            {
+                                name: "Rosales",
+                                latin: "Rosales",
+                                traits: "Diverse order including roses, elms, mulberries.",
+                                type: "order",
+                                children: [
+                                    {
+                                        name: "Rose Family",
+                                        latin: "Rosaceae",
+                                        traits: "Alternate simple leaves, often showy 5-petaled flowers, fleshy or stone fruits.",
+                                        type: "family",
+                                        species: ["prunus_serotina"]
+                                    },
+                                    {
+                                        name: "Elm Family",
+                                        latin: "Ulmaceae",
+                                        traits: "Alternate simple leaves with ASYMMETRIC base, doubly-serrate margins, winged seeds.",
+                                        type: "family",
+                                        species: ["ulmus_americana"]
+                                    }
+                                ]
+                            },
+                            {
+                                name: "Fabales",
+                                latin: "Fabales",
+                                traits: "The legumes - nitrogen-fixing root nodules, compound leaves, bean pods.",
+                                type: "order",
+                                children: [
+                                    {
+                                        name: "Legume Family",
+                                        latin: "Fabaceae",
+                                        traits: "Alternate COMPOUND leaves, nitrogen fixation, distinctive seed pods (legumes).",
+                                        type: "family",
+                                        species: ["gleditsia_triacanthos", "robinia_pseudoacacia"]
+                                    }
+                                ]
+                            },
+                            {
+                                name: "Malpighiales",
+                                latin: "Malpighiales",
+                                traits: "Large diverse order including willows, poplars.",
+                                type: "order",
+                                children: [
+                                    {
+                                        name: "Willow Family",
+                                        latin: "Salicaceae",
+                                        traits: "Alternate simple leaves, catkins, cottony seeds for wind dispersal.",
+                                        type: "family",
+                                        species: ["populus_deltoides"]
+                                    }
+                                ]
+                            },
+                            {
+                                name: "Sapindales",
+                                latin: "Sapindales",
+                                traits: "Includes maples, citrus, sumacs. Often opposite leaves or compound leaves.",
+                                type: "order",
+                                children: [
+                                    {
+                                        name: "Maple Family",
+                                        latin: "Sapindaceae",
+                                        traits: "OPPOSITE simple leaves (usually palmately lobed), winged seeds (samaras in pairs). Key ID: opposite branching!",
+                                        type: "family",
+                                        species: ["acer_saccharum", "acer_rubrum", "acer_platanoides", "acer_saccharinum"]
+                                    }
+                                ]
+                            },
+                            {
+                                name: "Proteales",
+                                latin: "Proteales",
+                                traits: "Small order including sycamores and proteas.",
+                                type: "order",
+                                children: [
+                                    {
+                                        name: "Sycamore Family",
+                                        latin: "Platanaceae",
+                                        traits: "Alternate palmately lobed leaves, distinctive mottled bark (exfoliating), ball-shaped fruit clusters.",
+                                        type: "family",
+                                        species: ["platanus_occidentalis"]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: "Asterids",
+                        latin: "Asteridae",
+                        traits: "Second major eudicot clade. Includes ashes, dogwoods. Note: both have OPPOSITE leaves!",
+                        type: "order",
+                        children: [
+                            {
+                                name: "Lamiales",
+                                latin: "Lamiales",
+                                traits: "Includes mints, olives, ashes. Often opposite leaves.",
+                                type: "order",
+                                children: [
+                                    {
+                                        name: "Olive Family",
+                                        latin: "Oleaceae",
+                                        traits: "OPPOSITE COMPOUND leaves (in ashes), includes olives, lilacs, ashes. Key ID: opposite branching with compound leaves!",
+                                        type: "family",
+                                        species: ["fraxinus_americana"]
+                                    }
+                                ]
+                            },
+                            {
+                                name: "Cornales",
+                                latin: "Cornales",
+                                traits: "Includes dogwoods.",
+                                type: "order",
+                                children: [
+                                    {
+                                        name: "Dogwood Family",
+                                        latin: "Cornaceae",
+                                        traits: "OPPOSITE simple leaves with arcuate venation (veins curve toward tip), showy bracts. Key ID: opposite branching!",
+                                        type: "family",
+                                        species: ["cornus_florida"]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    };
+
+    // Get tree by scientific name (lowercase with underscore)
+    function getTreeByScientific(scientificId) {
+        return trees.find(t => t.scientific.toLowerCase().replace(' ', '_') === scientificId);
+    }
+
+    // Render phylogeny tree
+    function renderPhylogeny() {
+        const container = document.getElementById('phylo-tree');
+        container.innerHTML = renderPhyloNode(phylogenyData, 0);
+    }
+
+    function renderPhyloNode(node, depth) {
+        const hasChildren = node.children && node.children.length > 0;
+        const hasSpecies = node.species && node.species.length > 0;
+        const speciesCount = countSpecies(node);
+        const typeClass = node.type || 'clade';
+
+        let speciesHtml = '';
+        if (hasSpecies) {
+            speciesHtml = '<div class="phylo-species-list">' +
+                node.species.map(sid => {
+                    const tree = getTreeByScientific(sid);
+                    if (!tree) return '';
+                    return `
+                        <div class="phylo-species" onclick="goToTree(${tree.id})">
+                            <span class="species-name">${tree.name}</span>
+                            <span class="species-latin">${tree.scientific}</span>
+                            <span class="species-tag ${tree.origin}">${tree.origin}</span>
+                        </div>
+                    `;
+                }).join('') +
+            '</div>';
+        }
+
+        let childrenHtml = '';
+        if (hasChildren) {
+            childrenHtml = '<div class="phylo-children">' +
+                `<div class="phylo-clade ${typeClass}">` +
+                node.children.map(child => renderPhyloNode(child, depth + 1)).join('') +
+                '</div></div>';
+        }
+
+        const isExpandable = hasChildren || hasSpecies;
+        const toggle = isExpandable ? '<span class="phylo-toggle">+</span>' : '<span class="phylo-toggle"></span>';
+
+        return `
+            <div class="phylo-node ${depth === 0 ? 'expanded' : ''}" onclick="togglePhyloNode(event, this)">
+                <div class="phylo-node-header">
+                    ${toggle}
+                    <span class="phylo-node-name">${node.name}</span>
+                    <span class="phylo-node-latin">(${node.latin})</span>
+                    <span class="phylo-count">${speciesCount} species</span>
+                </div>
+                <div class="phylo-traits"><strong>Shared traits:</strong> ${node.traits}</div>
+                ${speciesHtml}
+                ${childrenHtml}
+            </div>
+        `;
+    }
+
+    function countSpecies(node) {
+        let count = 0;
+        if (node.species) count += node.species.length;
+        if (node.children) {
+            node.children.forEach(child => {
+                count += countSpecies(child);
+            });
+        }
+        return count;
+    }
+
+    function togglePhyloNode(event, element) {
+        event.stopPropagation();
+        const toggle = element.querySelector('.phylo-toggle');
+        if (element.classList.contains('expanded')) {
+            element.classList.remove('expanded');
+            if (toggle) toggle.textContent = '+';
+        } else {
+            element.classList.add('expanded');
+            if (toggle) toggle.textContent = '-';
+        }
+    }
+
+    function goToTree(treeId) {
+        event.stopPropagation();
+        setView('browse');
+        setTimeout(() => {
+            expandedCard = treeId;
+            renderTreeGrid();
+            const card = document.querySelector(`[data-tree-id="${treeId}"]`);
+            if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 100);
+    }
+
+    // Compare View - Similar Species
+    function renderCompare() {
+        const container = document.getElementById('compare-grid');
+        container.innerHTML = confusionPairs.map(pair => {
+            const tree1 = trees.find(t => t.id === pair.species[0]);
+            const tree2 = trees.find(t => t.id === pair.species[1]);
+            if (!tree1 || !tree2) return '';
+
+            const img1 = getTreeImage(tree1.id, 'leaf');
+            const img2 = getTreeImage(tree2.id, 'leaf');
+
+            return `
+                <div class="compare-card">
+                    <div class="compare-card-header">
+                        <h3>${pair.title}</h3>
+                        <span class="compare-difficulty">${pair.difficulty}</span>
+                    </div>
+                    <div class="compare-species">
+                        <div class="compare-species-side left">
+                            <div class="compare-species-name">${tree1.name}</div>
+                            <div class="compare-species-latin">${tree1.scientific}</div>
+                            <img class="compare-species-img" src="${img1}" alt="${tree1.name} leaf" onerror="this.style.display='none'">
+                            ${renderCommonalityBadge(tree1.id)}
+                        </div>
+                        <div class="compare-species-vs">VS</div>
+                        <div class="compare-species-side right">
+                            <div class="compare-species-name">${tree2.name}</div>
+                            <div class="compare-species-latin">${tree2.scientific}</div>
+                            <img class="compare-species-img" src="${img2}" alt="${tree2.name} leaf" onerror="this.style.display='none'">
+                            ${renderCommonalityBadge(tree2.id)}
+                        </div>
+                    </div>
+                    <table class="compare-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>${tree1.name}</th>
+                                <th>${tree2.name}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${pair.keyDifferences.map(diff => `
+                                <tr>
+                                    <td>${diff.feature}</td>
+                                    <td>${highlightCaps(diff.left)}</td>
+                                    <td>${highlightCaps(diff.right)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Helper to highlight CAPS words
+    function highlightCaps(text) {
+        return text.replace(/\b([A-Z]{2,})\b/g, '<span class="highlight">$1</span>');
+    }
+
+    // Render commonality badge
+    function renderCommonalityBadge(treeId) {
+        const data = treeCommonality[treeId];
+        if (!data) return '';
+        const stars = '★'.repeat(data.rating) + '☆'.repeat(5 - data.rating);
+        return `
+            <span class="commonality-badge rating-${data.rating}" title="${data.desc}">
+                <span class="commonality-stars">${stars}</span>
+                ${data.label}
+            </span>
+        `;
+    }
+
+    // Get commonality rating for a tree
+    function getCommonality(treeId) {
+        return treeCommonality[treeId]?.rating || 3;
+    }
+
+    // Seasonal Mode Data
+    const seasonalData = {
+        spring: {
+            name: "Spring",
+            months: "Mar-May",
+            icon: "🌸",
+            color: "#4caf50",
+            description: "Spring is prime time for flower identification. Many trees bloom before leaves emerge, making flowers highly visible.",
+            primaryFeatures: [
+                { name: "Flowers", icon: "🌺", desc: "Many trees flower in spring - look for catkins, showy blooms, or subtle clusters" },
+                { name: "Emerging Leaves", icon: "🌱", desc: "Watch leaf buds break and unfurl - color and timing are diagnostic" }
+            ],
+            secondaryFeatures: [
+                { name: "Bark", icon: "🪵", desc: "Still visible before full leaf-out" },
+                { name: "Early Fruit", icon: "🍂", desc: "Maple samaras develop in spring" }
+            ],
+            tipField: "spring_tip",
+            imageType: "tree" // Best image type for this season
+        },
+        summer: {
+            name: "Summer",
+            months: "Jun-Aug",
+            icon: "☀️",
+            color: "#ff9800",
+            description: "Full foliage makes leaf identification ideal. Focus on leaf shape, arrangement, and texture. Bark is partially obscured.",
+            primaryFeatures: [
+                { name: "Leaf Shape", icon: "🍃", desc: "Full-sized leaves - examine lobes, margins, and venation patterns" },
+                { name: "Leaf Arrangement", icon: "🌿", desc: "Opposite vs alternate branching is clearly visible" }
+            ],
+            secondaryFeatures: [
+                { name: "Developing Fruit", icon: "🫐", desc: "Acorns, nuts, and berries forming" },
+                { name: "Overall Form", icon: "🌳", desc: "Crown shape and branching pattern" }
+            ],
+            tipField: "summer_tip",
+            imageType: "leaf"
+        },
+        fall: {
+            name: "Fall",
+            months: "Sep-Nov",
+            icon: "🍂",
+            color: "#f44336",
+            description: "Fall color is highly diagnostic, especially for maples and oaks. Mature fruits and seeds are ready for identification.",
+            primaryFeatures: [
+                { name: "Fall Color", icon: "🍁", desc: "Brilliant colors are species-specific - reds, oranges, yellows, or browns" },
+                { name: "Mature Fruit", icon: "🌰", desc: "Acorns, nuts, samaras, and berries are fully developed" }
+            ],
+            secondaryFeatures: [
+                { name: "Leaf Shape", icon: "🍃", desc: "Still visible until leaf drop" },
+                { name: "Seed Dispersal", icon: "💨", desc: "Watch for wind-dispersed seeds" }
+            ],
+            tipField: "fall_tip",
+            imageType: "fruit"
+        },
+        winter: {
+            name: "Winter",
+            months: "Dec-Feb",
+            icon: "❄️",
+            color: "#2196f3",
+            description: "With leaves gone, focus on bark patterns, bud shapes, and overall silhouette. This is the true test of tree ID skills!",
+            primaryFeatures: [
+                { name: "Bark", icon: "🪵", desc: "Texture, color, and pattern are fully visible - furrows, plates, peeling, smooth" },
+                { name: "Buds", icon: "🌱", desc: "Terminal and lateral bud shape, color, and arrangement" }
+            ],
+            secondaryFeatures: [
+                { name: "Silhouette", icon: "🌲", desc: "Branching pattern and overall form without leaves" },
+                { name: "Persistent Features", icon: "🍂", desc: "Some trees hold leaves or fruits into winter" }
+            ],
+            tipField: "winter_tip",
+            imageType: "bark"
+        }
+    };
+
+    let currentSeason = getCurrentSeason();
+
+    function getCurrentSeason() {
+        const month = new Date().getMonth(); // 0-11
+        if (month >= 2 && month <= 4) return 'spring';
+        if (month >= 5 && month <= 7) return 'summer';
+        if (month >= 8 && month <= 10) return 'fall';
+        return 'winter';
+    }
+
+    function renderSeasonal(season = currentSeason) {
+        currentSeason = season;
+        const data = seasonalData[season];
+
+        // Render season selector
+        const selector = document.getElementById('seasonal-selector');
+        selector.innerHTML = Object.entries(seasonalData).map(([key, s]) => `
+            <button class="seasonal-btn ${key === season ? 'active' : ''}"
+                    data-season="${key}"
+                    onclick="renderSeasonal('${key}')"
+                    style="${key === season ? `--season-color: ${s.color}; --season-bg: ${s.color}15;` : ''}">
+                <span class="season-icon">${s.icon}</span>
+                <span class="season-name">${s.name}</span>
+                <span class="season-months">${s.months}</span>
+            </button>
+        `).join('');
+
+        // Render season info
+        const info = document.getElementById('seasonal-info');
+        info.style.setProperty('--season-color', data.color);
+        info.innerHTML = `
+            <h3>${data.icon} ${data.name} Identification Guide</h3>
+            <p>${data.description}</p>
+            <div class="seasonal-features">
+                ${data.primaryFeatures.map(f => `
+                    <div class="seasonal-feature primary" style="--season-color: ${data.color};">
+                        <h4>${f.icon} ${f.name} <span style="background: ${data.color}; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem;">PRIMARY</span></h4>
+                        <p>${f.desc}</p>
+                    </div>
+                `).join('')}
+                ${data.secondaryFeatures.map(f => `
+                    <div class="seasonal-feature">
+                        <h4>${f.icon} ${f.name}</h4>
+                        <p>${f.desc}</p>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+
+        // Render trees with seasonal tips
+        const grid = document.getElementById('seasonal-tree-grid');
+
+        // Sort by commonality and filter to prioritize trees with good seasonal features
+        const sortedTrees = [...trees].sort((a, b) => {
+            // Prioritize common trees
+            const commonDiff = getCommonality(b.id) - getCommonality(a.id);
+            if (commonDiff !== 0) return commonDiff;
+            return a.name.localeCompare(b.name);
+        });
+
+        grid.innerHTML = sortedTrees.map(tree => {
+            const tip = tree[data.tipField] || "Observe carefully using the features above.";
+            const img = getTreeImage(tree.id, data.imageType);
+            const commonality = treeCommonality[tree.id];
+
+            return `
+                <div class="seasonal-tree-card" onclick="goToTreeFromSeasonal(${tree.id})"
+                     style="--season-color: ${data.color}; --season-bg: ${data.color}15;">
+                    <div class="seasonal-tree-header">
+                        <img class="seasonal-tree-img" src="${img}" alt="${tree.name}" onerror="this.src='${getTreeImage(tree.id, 'leaf')}'">
+                        <div class="seasonal-tree-info">
+                            <h4>${tree.name}</h4>
+                            <div class="latin">${tree.scientific}</div>
+                            ${renderCommonalityBadge(tree.id)}
+                        </div>
+                    </div>
+                    <div class="seasonal-tip">
+                        <div class="seasonal-tip-label">${data.icon} ${data.name} ID Tip:</div>
+                        <div class="seasonal-tip-text">${tip}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function goToTreeFromSeasonal(treeId) {
+        setView('browse');
+        setTimeout(() => {
+            expandedCard = treeId;
+            renderTreeGrid();
+            const card = document.querySelector(`[data-tree-id="${treeId}"]`);
+            if (card) {
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 100);
+    }
+
+    // Quiz Persistence
+    function saveQuizProgress() {
+        if (quizState.questions && quizState.questions.length > 0) {
+            localStorage.setItem('quizState', JSON.stringify(quizState));
+        }
+    }
+
+    function loadQuizProgress() {
+        const saved = localStorage.getItem('quizState');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                if (parsed.questions && parsed.current < parsed.questions.length) {
+                    quizState = parsed;
+                    return true;
+                }
+            } catch (e) {}
+        }
+        return false;
+    }
+
+    // Image Loading Handlers
+    function handleImageLoad(img) {
+        img.classList.add('loaded');
+        if (img.parentElement) {
+            img.parentElement.classList.add('loaded');
+        }
+    }
+
+    function handleImageError(img) {
+        img.style.display = 'none';
+        if (img.parentElement) {
+            img.parentElement.classList.add('loaded');
+        }
+    }
+
+    // Keyboard navigation for quiz (1-4 keys)
+    document.addEventListener('keydown', (e) => {
+        // Quiz keyboard navigation
+        if (document.getElementById('view-quiz').style.display !== 'none' && quizState.questions) {
+            const key = parseInt(e.key);
+            if (key >= 1 && key <= 4) {
+                const q = quizState.questions[quizState.current];
+                if (q && q.options[key - 1]) {
+                    answerQuiz(q.options[key - 1]);
+                }
+            }
+        }
+
+        // Lightbox navigation
+        if (document.getElementById('lightbox').classList.contains('active')) {
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') navLightbox(-1);
+            if (e.key === 'ArrowRight') navLightbox(1);
+        }
+    });
+    </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(registration => {
+                    console.log('SW registered:', registration.scope);
+                })
+                .catch(error => {
+                    console.log('SW registration failed:', error);
+                });
+        });
+    }
+    </script>
+</body>
+</html>
