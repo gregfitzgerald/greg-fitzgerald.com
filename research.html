@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gregory S. Fitzgerald, PhD -- Research</title>
+    <meta name="description" content="Research by Gregory S. Fitzgerald, PhD -- a cross-species meta-analysis of translational validity in cognition, intranasal IGF-2 for early Alzheimer's disease, executive-function and memory studies, and whole-brain imaging of GABAergic interneurons.">
+    <meta property="og:title" content="Gregory S. Fitzgerald, PhD -- Research">
+    <meta property="og:description" content="A cross-species meta-analysis of translational validity in cognition, intranasal IGF-2 for early Alzheimer's disease, and whole-brain imaging of GABAergic interneurons.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://greg-fitzgerald.com/research.html">
+    <link rel="canonical" href="https://greg-fitzgerald.com/research.html">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/jpeg" href="favicon.jpg">
+</head>
+<body>
+    <header class="site-header">
+        <div class="site-name"><a href="index.html">Greg Fitzgerald</a></div>
+        <ul class="site-nav">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="research.html">Research</a></li>
+            <li><a href="writing.html">Blog</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </header>
+
+    <main class="page">
+        <h1>Research</h1>
+
+        <p>Fifteen years of work across preclinical neuroscience and quantitative evidence synthesis.</p>
+
+        <h2>Doctoral Research</h2>
+        <p><strong>University at Albany, SUNY &middot; Stellar Lab &middot; 2016-2026</strong></p>
+        <p>My doctoral work had two parts: a preclinical neuroscience study on IGF-2 and cognition in early Alzheimer's disease, and a quantitative synthesis of how well cognitive findings translate across species.</p>
+
+        <h3>Evidence Synthesis</h3>
+
+        <details class="research-item">
+            <summary>
+                <span class="ri-title">A Cross-Species Meta-Analysis of Enrichment &amp; Cognition</span>
+                <span class="ri-snippet">Enrichment reliably sharpens cognition in lab rodents, but comparable interventions in people (cognitive training, exercise) seem to do much less. My dissertation measured that gap across species, dug into what drives it, and asked what it means for translational research.</span>
+                <span class="ri-status">Doctoral dissertation &middot; Manuscript in preparation</span>
+                <span class="ri-more"></span>
+            </summary>
+            <div class="ri-body">
+                <figure>
+                    <img src="images/research/enrichment-resource-mismatch.png" alt="Resource-mismatch hypothesis diagram: a diminishing-returns curve of cognitive performance against environmental resources, with a large rodent effect from a deprived baseline and a small human effect near the top.">
+                    <figcaption>Diagram of the resource-mismatch hypothesis: cognitive performance rises with environmental resources along a diminishing-returns curve. Rodents move from a deprived standard-housing baseline to enriched housing (a large effect), while humans move along the flat upper part of the curve (a smaller effect). (Figure from the dissertation.)</figcaption>
+                </figure>
+                <p>Environmental enrichment (access to rich, complex surroundings) reliably improves how laboratory rodents perform on cognitive tasks. Run the same kind of intervention in people, though, and the benefit is much smaller. That discrepancy matters, because taking the rodent results at face value sets unrealistic expectations for what cognitive interventions can do in humans.</p>
+                <p>After a systematic search of the literature, I used meta-analytic methods to put the rodent and human effect sizes side by side. Rodents showed medium-to-large effects (g = 0.44); humans showed small ones (g = 0.16). That's a <strong>2.6-fold gap</strong> --a concrete benchmark for discounting rodent effect sizes when you're planning a human intervention.</p>
+                <p>I weighed several explanations. The best-supported and most tractable explanation is a plain gap in baseline conditions between the species: resource mismatch. Standard lab housing is so impoverished next to an ordinary human life that "enrichment" mostly means relief from deprivation, which leaves rodents far more room to improve than people have. It's a case study in how a quiet methodological choice can bias results and distort how we read translational research.</p>
+                <p><strong>Methods:</strong> multi-database systematic search, multilevel effect-size modeling with variance correction, heterogeneity and publication-bias analysis, and cross-species comparison in R (metafor).</p>
+            </div>
+        </details>
+
+        <h3>Preclinical Alzheimer's &amp; Cognition</h3>
+
+        <details class="research-item">
+            <summary>
+                <span class="ri-title">Intranasal IGF-2 in a Diet-Induced Model of Early Alzheimer's</span>
+                <span class="ri-snippet">Can intranasal IGF-2 protect cognition in a diet-induced rat model of early Alzheimer's --and which receptor does the work?</span>
+                <span class="ri-status">Manuscript in preparation</span>
+                <span class="ri-more"></span>
+            </summary>
+            <div class="ri-body">
+                <figure>
+                    <img src="images/research/igf2-graphic-abstract.jpg" alt="Graphical abstract summarizing IGF-2 as a candidate for treating and preventing Alzheimer's disease: it improves cognition in rodent models, opposes amyloid pathology, stimulates neural growth, and is safe with subcutaneous and intranasal delivery.">
+                    <figcaption>Graphical abstract from my first-author review of IGF-2 as a therapeutic and preventive agent for Alzheimer's disease (<em>CNS Neuroscience &amp; Therapeutics</em>).</figcaption>
+                </figure>
+                <p>I modeled the early stages of sporadic Alzheimer's by maintaining rats on a long-term high-fat, high-sugar diet, which produces obesity, brain insulin resistance, and the soluble amyloid-beta oligomers characteristic of early disease, a more translationally faithful model than transgenic familial-AD mice.</p>
+                <p>I then tested whether IGF-2 (a neurotrophic factor that both promotes amyloid clearance and potentiates insulin signaling) could blunt the resulting cognitive decline when delivered intranasally, a route I chose because it can plausibly translate to patients. Cognition was assessed with a battery of spatial memory tests; mechanism was probed with primary hippocampal culture, glucose-uptake assays, receptor blockade, Western blot, and immunocytochemistry, with particular attention to which of the three receptors (insulin receptor, IGF1R, IGF2R) mediates IGF-2's effects.</p>
+                <p>The program also produced a <strong>first-author review</strong> in <em>CNS Neuroscience &amp; Therapeutics</em> laying out the therapeutic and preventive case for IGF-2 in Alzheimer's disease (on my <a href="cv.html">CV</a>).</p>
+            </div>
+        </details>
+
+        <details class="research-item">
+            <summary>
+                <span class="ri-title">An Immunohistochemical Marker of IGF2R Activation</span>
+                <span class="ri-snippet">Lots of evidence says the IGF2 receptor matters, yet no one could see when it's actually switched on. I built a way to.</span>
+                <span class="ri-status">Presented at a regional symposium (2022) &middot; Preprint in preparation</span>
+                <span class="ri-more"></span>
+            </summary>
+            <div class="ri-body">
+                <figure>
+                    <img src="images/research/igf2r-colocalization.jpg" alt="Four-panel fluorescence microscopy montage of brain tissue: phospho-IGF2R in one channel, a co-marker in a second, nuclei labeled with DAPI in blue, and a merged image showing overlapping signal.">
+                    <figcaption>Colocalization immunohistochemistry using the phospho-IGF2R antibody: individual channels plus the merged panel, showing receptor-activation signal in tissue. Presented at a regional symposium, 2022.</figcaption>
+                </figure>
+                <p>IGF2R activation is thought to be central to IGF-2's effects in the brain, but the field had no reliable way to detect when the receptor is actually engaged and internalized. I set out to build one: an immunohistochemical marker of IGF2R binding and translocation.</p>
+                <p>The key was a phospho-IGF2R antibody. I didn't create it; it came from an obscure source the field had almost entirely overlooked. But its phospho-specificity is exactly what makes it useful, since it reports the activated receptor rather than just its presence. Used in a colocalization study, it let me visualize IGF2R activation directly in tissue, filling a real gap in a mechanism that many lines of evidence suggest is important.</p>
+            </div>
+        </details>
+
+        <details class="research-item">
+            <summary>
+                <span class="ri-title">Does Hippocampal Insulin Really Drive Memory?</span>
+                <span class="ri-snippet">A prior claim that intrahippocampal insulin enhances memory didn't hold up under tighter methods --I found no effect.</span>
+                <span class="ri-status">Presented at SfN 2018 &middot; Preprint in preparation</span>
+                <span class="ri-more"></span>
+            </summary>
+            <div class="ri-body">
+                <!-- image slot: behavioral results / apparatus -->
+                <p>An influential line of work had reported that insulin acting directly in the hippocampus enhances memory. I tried repeatedly to replicate those findings using gold-standard methods (careful intrahippocampal infusions and well-controlled behavioral assays) and could not reproduce them. Across spatial navigation and the encoding and retrieval of contextual fear memory, I found no effect of hippocampal insulin.</p>
+                <p>Null results like this matter: they keep the field from building on effects that may not be real. Presented at the Society for Neuroscience Annual Meeting (2018).</p>
+            </div>
+        </details>
+
+        <details class="research-item">
+            <summary>
+                <span class="ri-title">Is the Rodent mPFC Required for Attentional Set-Shifting?</span>
+                <span class="ri-snippet">In humans, shifting between rules needs the prefrontal cortex. Does the rat's supposed equivalent work the same way? I tested it --and it didn't.</span>
+                <span class="ri-status">Preprint in preparation</span>
+                <span class="ri-more"></span>
+            </summary>
+            <div class="ri-body">
+                <!-- image slot: cannula placement / set-shift task diagram -->
+                <p>The rodent medial prefrontal cortex (mPFC) is often treated as the equivalent of the human prefrontal cortex, but that homology is genuinely controversial. In humans, attentional set-shifting (a test of cognitive flexibility) depends on prefrontal activity, so I asked whether the same holds in rats. I temporarily inactivated the mPFC with intra-mPFC lidocaine during a set-shifting task, and performance was unaffected.</p>
+                <p>The result corroborates the skeptics: whatever the rodent mPFC does, it isn't a simple stand-in for the human region on this kind of executive task, a caution worth keeping in mind whenever rodent prefrontal findings are read as models of human cognition.</p>
+            </div>
+        </details>
+
+        <details class="research-item">
+            <summary>
+                <span class="ri-title">A Method for Intranasal Drug Delivery in Awake Rats</span>
+                <span class="ri-snippet">Intranasal dosing is the ideal route for brain drugs in people but notoriously hard in rats --so I built a method that works in awake animals.</span>
+                <span class="ri-status">SOP adopted lab-wide</span>
+                <span class="ri-more"></span>
+            </summary>
+            <div class="ri-body">
+                <!-- image slot: intranasal delivery apparatus / restraint -->
+                <p>Intranasal administration delivers drugs to the brain while bypassing the blood-brain barrier, which makes it an appealing route for neurotherapeutics in humans, but it's difficult to do cleanly in rats without the confounds of anesthesia. I developed and documented a standard operating procedure for intranasal delivery in awake rats, built around graded habituation and operant shaping (food-reward training to a soft cone restraint).</p>
+                <p>The method reflects something I care about deeply: good animal welfare and good science are the same project. Reliable, low-stress dosing meant genuinely understanding rat behavior: how they learn, what frightens them, and how to habituate them patiently enough that the procedure becomes routine rather than distressing. That care shows up in the data as much as in the animals' well-being.</p>
+            </div>
+        </details>
+
+        <details class="research-item">
+            <summary>
+                <span class="ri-title">Breaking AGEs to Rescue Bone &amp; Brain in Diabetes (RPI Collaboration)</span>
+                <span class="ri-snippet">A cross-institution study of whether an AGE-cleaving drug can rescue both cognition and bone strength in diabetic rats.</span>
+                <span class="ri-status">Collaboration with Rensselaer Polytechnic Institute</span>
+                <span class="ri-more"></span>
+            </summary>
+            <div class="ri-body">
+                <!-- image slot: study design / bone-and-brain readout -->
+                <p>Type-2 diabetes raises fracture risk even when bone density looks normal, partly through advanced glycation end-products (AGEs) that stiffen the bone matrix, and the same metabolic disease drives cognitive decline. In collaboration with the Vashishth lab at Rensselaer Polytechnic Institute, I helped test whether phenacylthiazolium chloride (PTC), a compound that cleaves AGEs, could rescue skeletal fragility in a diet-induced diabetic rat model, while we assessed effects on cognition.</p>
+                <p>The project sits at an intersection I keep returning to: the link between physical frailty and Alzheimer's disease. Bone, muscle, and brain decline together in aging, and I'm especially interested in how physical activity and exercise (and the signaling molecules they release) might help prevent AD. Testing a single intervention against both skeletal and cognitive fragility treats that decline as the connected problem it really is.</p>
+            </div>
+        </details>
+
+        <h2>Earlier Research</h2>
+        <p><strong>Cold Spring Harbor Laboratory &middot; Osten Lab &middot; 2011-2016</strong></p>
+        <p>I spent five years in Pavel Osten's lab at Cold Spring Harbor. I started as an assistant researcher and worked my way up to lab manager. At a certain point my technician and lab-management duties (running the animal colony, procurement, and budgets, and training junior staff) eclipsed my involvement in hands-on research.</p>
+
+        <details class="research-item">
+            <summary>
+                <span class="ri-title">Brain-Wide Mapping of GABAergic Interneurons</span>
+                <span class="ri-snippet">Mapping three major classes of inhibitory interneuron across the entire mouse brain, at single-cell resolution.</span>
+                <span class="ri-status">Published in Cell (Kim et al. 2017)</span>
+                <span class="ri-more"></span>
+            </summary>
+            <div class="ri-body">
+                <!-- image slot: brain-wide interneuron map -->
+                <p>Using <strong>serial two-photon tomography</strong> (whole-brain imaging at single-cell resolution), our group mapped three classes of GABAergic interneuron (PV, SST, VIP) across the entire mouse brain, both within regions and across development. The work revealed stereotyped, cell-type-based cortical architecture and subcortical sexual dimorphism, and was published in <em>Cell</em> (Kim et al. 2017), on which I'm a contributing author. I handled the immunolabeling validation behind the cell-type identification.</p>
+            </div>
+        </details>
+
+        <details class="research-item">
+            <summary>
+                <span class="ri-title">The CNTNAP2 Autism Model</span>
+                <span class="ri-snippet">Tracing how an autism-linked mutation reshapes activity in social-brain circuits.</span>
+                <span class="ri-more"></span>
+            </summary>
+            <div class="ri-body">
+                <!-- image slot: c-fos activation map -->
+                <p>I worked on the <em>Cntnap2</em> knockout, a mouse model of autism, characterizing its social behavior and using c-fos mapping to compare brain activation between knockout and wild-type animals. I also traced the afferent and efferent projections of the infralimbic cortex using stereotactically injected viral vectors, to place the social-behavior phenotype in a circuit context.</p>
+            </div>
+        </details>
+
+        <p style="margin-top:1.5rem;"><strong>CUNY Graduate Center &middot; Bodnar Lab &middot; 2009-2011</strong></p>
+
+        <details class="research-item">
+            <summary>
+                <span class="ri-title">Reward-Based Learning &amp; Conditioned Flavor Preference</span>
+                <span class="ri-snippet">Where I first got into neuroscience: how dopamine and opioid systems build learned food preferences.</span>
+                <span class="ri-more"></span>
+            </summary>
+            <div class="ri-body">
+                <!-- image slot: reward-circuit c-fos map -->
+                <p>I studied how dopamine and opioid systems drive reward-based learning, using conditioned flavor-preference paradigms in BALB/c and SWR mice and running c-fos immunohistochemistry to map activation across reward circuitry (prefrontal cortex, nucleus accumbens, amygdala, VTA).</p>
+            </div>
+        </details>
+
+        <h2>Research Interests</h2>
+        <ul>
+            <li><strong>Translational validity:</strong> why preclinical findings fail to translate, and how to build models that predict better</li>
+            <li><strong>Meta-analysis &amp; research reproducibility:</strong> quantitative synthesis across studies, heterogeneity and publication bias, and finding and fixing the methodological choices that undermine rigor</li>
+            <li><strong>Neurotrophic factors &amp; exerkines:</strong> IGF-2, BDNF, exercise-released signaling molecules, and their roles in cognition and neurodegeneration</li>
+            <li><strong>Alzheimer's disease:</strong> preventive and therapeutic interventions, early biomarkers, and metabolic and lifestyle contributions</li>
+            <li><strong>Neural circuitry:</strong> GABAergic interneuron architecture, social-brain circuits, autism models</li>
+            <li><strong>Research technology &amp; ground-truth datasets:</strong> building tools and reference datasets that accelerate discovery across an entire field</li>
+        </ul>
+    </main>
+
+    <footer class="site-footer">&copy; 2026 Greg Fitzgerald. All rights reserved.</footer>
+</body>
+</html>

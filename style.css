@@ -1,0 +1,901 @@
+/* ============================
+   RESET
+   ============================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ============================
+   BASE
+   ============================ */
+
+html { font-size: 19px; }
+
+body {
+    font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    color: #111;
+    background: #fff;
+    margin: 0;
+    padding: 0;
+    line-height: 1.35;
+    counter-reset: sidenote-counter;
+}
+
+/* Internal links -- dark blue */
+a {
+    color: #00008b;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+a:hover { color: #0000cc; }
+
+/* External links (absolute URLs) -- dark green */
+a[href^="http"] {
+    color: #1a6b1a;
+}
+a[href^="http"]:hover { color: #104010; }
+
+/* ============================
+   HEADER
+   ============================ */
+
+.site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 2rem 2rem 0.75rem 2rem;
+    border-bottom: 1px solid #111;
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.site-name {
+    font-size: 1.9rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1;
+}
+.site-name a { color: #111; text-decoration: none; }
+
+.site-nav {
+    list-style: none; margin: 0; padding: 0;
+    display: flex; gap: 0.5rem;
+    font-size: 1.3rem;
+    line-height: 1;
+}
+
+.site-nav li {
+    box-shadow: 0 0 0 1px #ddd;
+    padding: 0.25rem 0.6rem;
+}
+
+.site-nav a { color: #333; text-decoration: none; }
+.site-nav a:hover { color: #111; }
+
+/* ============================
+   ARTICLE LAYOUT
+   980px max, 568px text column,
+   348px sidenotes floated right.
+   ============================ */
+
+article {
+    max-width: 980px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+    position: relative;
+}
+
+article > p,
+article > h2,
+article > h3,
+article > blockquote,
+article > ul,
+article > ol,
+article > pre,
+article > .katex-display,
+article > .table-wrapper,
+article > .video-wrapper,
+article > .tweet-embed {
+    max-width: 568px; /* 62% of 916px content area */
+}
+
+/* Type 1: inline figure (no caption) stays in text column */
+article > figure.inline { max-width: 568px; }
+
+/* Type 2: captioned figure spans full article width */
+article > figure { max-width: 100%; }
+
+/* Two equal columns for side-by-side comparisons (spans the full article width) */
+.two-col {
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 1.5rem 0;
+    box-shadow: 0 0 0 1px #ddd;
+}
+.two-col > * { min-width: 0; padding: 0.9rem 1.1rem; }
+.two-col > *:first-child { border-right: 1px solid #ddd; }
+.two-col > * > :first-child { margin-top: 0; }
+@media (max-width: 820px) {
+    .two-col { grid-template-columns: 1fr; }
+    .two-col > *:first-child { border-right: none; border-bottom: 1px solid #ddd; }
+}
+
+article > h1,
+.post-summary,
+.post-meta-block {
+    max-width: 100%;
+}
+
+/* ============================
+   TYPOGRAPHY
+   ============================ */
+
+h1 {
+    font-size: 1.9rem; font-weight: 600;
+    line-height: 1.25; margin: 0 0 0.5rem 0;
+}
+
+h2 {
+    font-size: 1.25rem; font-weight: 400;
+    font-style: italic; line-height: 1.3;
+    margin: 2.5rem 0 0.75rem 0;
+}
+
+h3 {
+    font-size: 1.05rem; font-weight: 600;
+    margin: 2rem 0 0.5rem 0;
+}
+
+p { margin: 0 0 1rem 0; }
+
+blockquote {
+    margin: 1.5rem 0 1.5rem 2rem;
+    padding-left: 1rem;
+    border-left: 1px solid #aaa;
+    color: #333;
+    font-style: italic;
+}
+blockquote p:last-child { margin-bottom: 0; }
+/* Keep the indented blockquote inside the text column (its 2rem left margin
+   would otherwise push a 568px box into the sidenote margin). */
+article > blockquote {
+    box-sizing: border-box;
+    max-width: calc(568px - 2rem);
+}
+
+ul, ol { padding-left: 2rem; margin: 0 0 1rem 0; }
+li { margin-bottom: 0.25rem; }
+
+/* ============================
+   POST HEADER
+   ============================ */
+
+.post-summary {
+    font-style: italic; color: #333;
+    font-size: 1rem; margin: 0.25rem 0 1.25rem 0;
+}
+
+.post-meta-block {
+    font-size: 0.8rem; color: #555;
+    margin-bottom: 2rem; line-height: 1.7;
+}
+
+.post-meta-row {
+    display: flex; gap: 0.6rem;
+    flex-wrap: wrap; align-items: baseline;
+    margin-bottom: 0.1rem;
+}
+
+.post-meta-label {
+    font-variant: small-caps; font-size: 0.72rem;
+    letter-spacing: 0.05em; color: #999;
+    width: 5rem; flex-shrink: 0;
+}
+
+.post-tags a { color: #555; }
+.post-tags a:hover { color: #00008b; }
+
+/* ============================
+   ABSTRACT + TOC ROW
+   ============================ */
+
+.abstract-toc-row {
+    display: flex; gap: 0;
+    align-items: stretch;
+    max-width: 100%;
+    margin: 0 0 2rem 0;
+    box-shadow: 0 0 0 1px #ddd;
+}
+
+.abstract {
+    flex: 0 0 50%;
+    min-width: 0;
+    padding: 0.9rem 1.1rem;
+    border-right: 1px solid #ddd;
+    color: #222; font-size: 0.88rem;
+}
+
+.abstract-label, .toc-label {
+    font-variant: small-caps; font-size: 0.7rem;
+    letter-spacing: 0.06em; color: #999;
+    display: block; margin-bottom: 0.4rem;
+}
+
+.abstract p:last-child { margin-bottom: 0; }
+
+.toc-block {
+    flex: 0 0 50%;
+    min-width: 0;
+    padding: 0.9rem 1.1rem;
+}
+
+/* Outer list: counter-based, no default list marker */
+.toc-block ol {
+    margin: 0;
+    padding-left: 0;
+    font-size: 0.85rem;
+    list-style: none;
+    counter-reset: toc-h2;
+}
+
+.toc-block > ol > li {
+    counter-increment: toc-h2;
+    margin-bottom: 0.2rem;
+    padding-left: 1.75rem;
+    position: relative;
+}
+
+.toc-block > ol > li::before {
+    content: counter(toc-h2) ".";
+    position: absolute;
+    left: 0;
+    color: #888;
+    font-size: 0.82rem;
+}
+
+.toc-block a { color: #333; text-decoration: none; }
+.toc-block a:hover { text-decoration: underline; color: #00008b; }
+
+/* Nested level: 1.1, 1.2, etc. */
+.toc-block ol ol {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 0.15rem;
+    counter-reset: toc-h3;
+}
+
+.toc-block ol ol li {
+    counter-increment: toc-h3;
+    font-size: 0.78rem;
+    margin-bottom: 0.1rem;
+    padding-left: 2rem;
+    position: relative;
+}
+
+.toc-block ol ol li::before {
+    content: counter(toc-h2) "." counter(toc-h3);
+    position: absolute;
+    left: 0;
+    color: #aaa;
+    font-size: 0.75rem;
+}
+
+.toc-block ol ol a { color: #555; }
+
+/* ============================
+   SIDENOTES
+   ============================ */
+
+input.margin-toggle { display: none; }
+label.margin-toggle { cursor: pointer; }
+label.margin-toggle:not(.sidenote-number) { display: none; }
+
+label.sidenote-number {
+    counter-increment: sidenote-counter;
+}
+
+label.sidenote-number::after {
+    content: counter(sidenote-counter, upper-alpha);
+    font-size: 0.65rem; vertical-align: super;
+    line-height: 0; font-style: normal;
+    color: #777; text-decoration: underline;
+    text-underline-offset: 1px;
+}
+
+.sidenote {
+    float: right; clear: right;
+    /* width is 19px (1rem) narrower than the -348px pull, which slides the
+       border-left ~1rem into the margin -- giving the text column a left
+       gutter that matches the sidenote's 1rem padding-left. */
+    width: 329px;
+    margin-right: -348px;
+    padding-left: 1rem;
+    border-left: 1px solid #ddd;
+    margin-top: 0.15rem; margin-bottom: 1rem;
+    font-size: 0.79rem; line-height: 1.5;
+    color: #444; position: relative;
+    /* opaque bg + stacking so a low margin note paints over the article's
+       closing <hr> instead of colliding with it */
+    background: #fff; z-index: 1;
+    transition: background 0.3s ease;
+}
+
+.sidenote::before {
+    content: counter(sidenote-counter, upper-alpha) " \2014\0020";
+    font-size: 0.72rem; font-style: normal;
+    color: #aaa; vertical-align: baseline;
+}
+
+.sidenote.highlighted { background: #fffbcc; }
+
+/* Images inside sidenotes */
+.sidenote img, .marginnote img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-top: 0.4rem;
+}
+
+.marginnote {
+    float: right; clear: right;
+    width: 329px; /* see .sidenote -- 1rem narrower than the pull for the gutter */
+    margin-right: -348px;
+    padding-left: 1rem;
+    border-left: 1px solid #ddd;
+    margin-top: 0.15rem; margin-bottom: 1rem;
+    font-size: 0.79rem; line-height: 1.5; color: #444;
+    /* opaque bg + stacking so a low margin note covers the closing <hr> */
+    position: relative; z-index: 1; background: #fff;
+}
+
+/* ============================
+   FIGURES & IMAGES
+   ============================ */
+
+figure {
+    margin: 1.5rem 0;
+}
+
+figure img {
+    max-width: 100%; height: auto; display: block;
+}
+
+/* Placeholder div used when no real image is available */
+.img-placeholder {
+    width: 100%; height: 220px;
+    background: #ebebeb;
+    display: flex; align-items: center;
+    justify-content: center;
+    color: #888; font-size: 0.82rem;
+    font-family: 'Consolas', monospace;
+    border: 1px solid #ddd;
+}
+
+figcaption {
+    font-size: 0.8rem; color: #555;
+    font-style: italic; margin-top: 0.5rem;
+    line-height: 1.4;
+}
+
+figcaption strong {
+    font-style: normal; font-weight: 600; color: #333;
+}
+
+/* ============================
+   CODE
+   ============================ */
+
+code {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.83rem;
+    background: #f4f4f4;
+    border: 1px solid #e4e4e4;
+    padding: 0.05rem 0.3rem;
+    border-radius: 2px;
+}
+
+pre {
+    background: #f4f4f4;
+    border: 1px solid #e4e4e4;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    font-size: 0.8rem;
+    line-height: 1.55;
+    border-radius: 3px;
+    margin: 1rem 0 1.25rem 0;
+}
+
+pre code {
+    background: none; border: none;
+    padding: 0; font-size: inherit;
+}
+
+/* ============================
+   TABLES
+   ============================ */
+
+.table-wrapper {
+    overflow-x: auto;
+    margin: 1.25rem 0;
+}
+
+/* Full-width table (Type 2 -- same as captioned figure) */
+.table-wrapper.full {
+    max-width: 100%;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.85rem;
+}
+
+thead th {
+    font-weight: 600;
+    text-align: left;
+    border-top: 2px solid #111;
+    border-bottom: 1px solid #111;
+    padding: 0.4rem 0.75rem;
+}
+
+tbody td {
+    padding: 0.35rem 0.75rem;
+    border-bottom: 1px solid #ddd;
+}
+
+tbody tr:last-child td {
+    border-bottom: 2px solid #111;
+}
+
+tfoot td {
+    font-size: 0.78rem;
+    color: #555;
+    padding: 0.35rem 0.75rem;
+    font-style: italic;
+}
+
+/* ============================
+   MATH (KaTeX)
+   ============================ */
+
+.katex-display {
+    margin: 1.25rem 0;
+    overflow-x: auto;
+}
+
+/* ============================
+   EMBEDDED CONTENT
+   ============================ */
+
+/* Responsive video wrapper (16:9) */
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0; overflow: hidden;
+    margin: 1.25rem 0;
+    background: #000;
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: none;
+}
+
+/* Tweet / social embed container */
+.tweet-embed {
+    margin: 1.25rem 0;
+    border: 1px solid #cfd9de;
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    font-size: 0.88rem;
+    max-width: 500px;
+}
+
+.tweet-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+}
+
+.tweet-avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: #ddd;
+    flex-shrink: 0;
+}
+
+.tweet-author-name {
+    font-weight: 600; font-size: 0.9rem;
+    display: block;
+}
+
+.tweet-author-handle {
+    color: #555; font-size: 0.82rem;
+}
+
+.tweet-body {
+    line-height: 1.45;
+    margin-bottom: 0.6rem;
+}
+
+.tweet-meta {
+    font-size: 0.78rem; color: #555;
+}
+
+/* ============================
+   REFERENCE ANNOTATIONS
+   ============================ */
+
+label.ref-toggle {
+    cursor: pointer;
+    font-size: 0.72rem;
+    color: #888;
+    vertical-align: super;
+    line-height: 0;
+    margin-left: 0.15rem;
+    text-decoration: none;
+    font-style: normal;
+}
+
+label.ref-toggle:hover { color: #333; }
+
+/* ============================
+   BIBLIOGRAPHY
+   ============================ */
+
+.bibliography {
+    margin: 3rem 0 0 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid #ccc;
+}
+
+.bibliography-heading {
+    font-size: 1rem; font-weight: 600;
+    font-style: normal; margin: 0 0 0.75rem 0;
+}
+
+.bibliography ol {
+    font-size: 0.82rem;
+    padding-left: 1.5rem;
+    line-height: 1.55;
+}
+
+.bibliography li {
+    margin-bottom: 0.6rem;
+}
+
+/* ============================
+   BIBLIOGRAPHY SPLIT LAYOUT
+   ============================ */
+
+.bibliography-split {
+    max-width: 100%;
+    box-shadow: 0 0 0 1px #ddd;
+    margin: 0 0 2rem 0;
+    counter-reset: bib-counter;
+}
+
+.bib-heading-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid #ddd;
+}
+
+.bib-col-label {
+    font-variant: small-caps;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: #999;
+    padding: 0.5rem 1rem;
+}
+
+.bib-col-label:first-child {
+    border-right: 1px solid #ddd;
+}
+
+.bib-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid #ddd;
+    transition: background 0.4s ease;
+}
+
+.bib-row:last-child {
+    border-bottom: none;
+}
+
+.bib-row:target {
+    background: #fffbcc;
+}
+
+.bib-citation {
+    padding: 0.65rem 1rem;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    border-right: 1px solid #ddd;
+}
+
+.bib-citation::before {
+    content: counter(bib-counter) ". ";
+    counter-increment: bib-counter;
+    color: #aaa;
+    font-size: 0.78rem;
+}
+
+.bib-annotation {
+    padding: 0.65rem 1rem;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: #333;
+    font-style: italic;
+}
+
+.bib-annotation:empty::before {
+    content: "\2014";
+    color: #ccc;
+    font-style: normal;
+}
+
+/* In-text citation links */
+a.cite-link {
+    text-decoration: none;
+    white-space: nowrap;
+    margin-left: 0.05rem;
+    font-size: 0.72rem;
+    vertical-align: super;
+    line-height: 0;
+    color: #555;
+}
+
+a.cite-link .cite-loc {
+    color: #999;
+    font-style: italic;
+    font-size: 0.62rem;
+}
+
+a.cite-link:hover,
+a.cite-link:hover .cite-loc {
+    color: #00008b;
+}
+
+/* ============================
+   FOOTER
+   ============================ */
+
+.site-footer {
+    border-top: 1px solid #111;
+    max-width: 980px;
+    margin: 4rem auto 3rem;
+    padding: 1.2rem 2rem 0;
+    font-size: 0.8rem; color: #555;
+}
+
+/* ============================
+   PAGE LAYOUT (non-blog pages)
+   ============================ */
+
+.page {
+    max-width: 640px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+}
+
+/* ============================
+   HOMEPAGE
+   ============================ */
+
+.hiring-banner {
+    box-shadow: 0 0 0 1px #ddd;
+    padding: 1rem 1.2rem;
+    font-size: 0.92rem;
+}
+
+.post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* ============================
+   POST PREVIEWS (blog index)
+   ============================ */
+
+.post-preview {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 2rem;
+}
+
+.post-preview:last-child {
+    border-bottom: none;
+}
+
+.post-preview h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    font-style: normal;
+    margin: 0 0 0.25rem 0;
+}
+
+.post-preview .post-meta {
+    color: #555;
+    font-size: 0.8rem;
+}
+
+/* ============================
+   HEADSHOT (about page, etc.)
+   ============================ */
+
+.headshot {
+    float: right;
+    max-width: 220px;
+    margin: 0 0 1.5rem 1.5rem;
+}
+
+/* ============================
+   CV
+   ============================ */
+
+.cv-section {
+    margin-bottom: 2rem;
+}
+
+.cv-entry {
+    margin-bottom: 1.5rem;
+}
+
+.cv-entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.cv-title {
+    font-weight: bold;
+}
+
+.cv-date {
+    color: #555;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.cv-organization {
+    color: #555;
+    margin-bottom: 0.25rem;
+}
+
+.download-link {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border: 1px solid #ddd;
+    font-size: 0.85rem;
+    margin: 1rem 0;
+}
+
+/* ============================
+   RESPONSIVE
+   ============================ */
+
+@media (max-width: 820px) {
+    article > p, article > h1, article > h2,
+    article > h3, article > blockquote,
+    article > ul, article > ol,
+    article > figure, article > pre,
+    article > .table-wrapper, article > .video-wrapper,
+    article > .tweet-embed, article > .bibliography,
+    .post-summary, .post-meta-block,
+    .abstract-toc-row, figure.wide {
+        max-width: 100%;
+    }
+
+    .abstract-toc-row { flex-direction: column; }
+    .abstract { border-right: none; border-bottom: 1px solid #ddd; }
+
+    label.margin-toggle:not(.sidenote-number) { display: inline; }
+    .sidenote, .marginnote { display: none; }
+
+    .margin-toggle:checked + .sidenote,
+    .margin-toggle:checked + .marginnote {
+        display: block; float: none; clear: both;
+        width: 100%; margin: 0.5rem 0 1rem 0;
+        border-left: 2px solid #aaa;
+        padding-left: 0.75rem; font-size: 0.85rem;
+    }
+
+    .headshot {
+        float: none;
+        display: block;
+        max-width: 200px;
+        margin: 0 auto 1.5rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .site-header { flex-wrap: wrap; gap: 0.5rem; }
+    .site-nav { gap: 1rem; }
+}
+
+/* ============================
+   RESEARCH ITEMS (collapsible)
+   ============================ */
+
+.research-item {
+    border-top: 1px solid #e4e4e4;
+}
+.research-item:last-of-type {
+    border-bottom: 1px solid #e4e4e4;
+}
+.research-item > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 0.85rem 0;
+    outline: none;
+}
+.research-item > summary::-webkit-details-marker { display: none; }
+.research-item > summary:focus-visible { outline: 2px solid #00008b; outline-offset: 2px; }
+
+.ri-title {
+    display: block;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: #111;
+}
+.ri-snippet {
+    display: block;
+    margin-top: 0.2rem;
+    color: #444;
+}
+.ri-status {
+    display: inline-block;
+    margin-top: 0.35rem;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #777;
+}
+.ri-more {
+    display: inline-block;
+    margin-top: 0.35rem;
+    margin-left: 1rem;
+    font-size: 0.8rem;
+    color: #00008b;
+}
+.ri-more::after { content: "Read more \25be"; }
+.research-item[open] .ri-more::after { content: "Show less \25b4"; }
+.research-item[open] > summary .ri-snippet { color: #666; }
+
+.ri-body {
+    padding: 0 0 0.9rem 0;
+}
+.ri-body p { margin: 0 0 0.7rem 0; }
+.ri-body figure {
+    margin: 0 0 0.9rem 0;
+}
+.ri-body figure img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #e4e4e4;
+}
+.ri-body figcaption {
+    font-size: 0.8rem;
+    color: #777;
+    margin-top: 0.3rem;
+}
+
+/* ============================
+   PRINT
+   ============================ */
+
+@media print {
+    .site-header,
+    .site-footer {
+        display: none;
+    }
+}
